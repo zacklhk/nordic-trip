@@ -1,622 +1,487 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北欧四国与多哈深度定制游 | 专属旅游规划</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-
-        body { 
-            font-family: 'Noto Sans SC', sans-serif; 
-            background-color: #f8fafc; 
-            color: #334155; 
-        }
-
-        /* 导航列底边过渡特效 */
-        .nav-btn {
-            position: relative;
-        }
-        .nav-btn::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -2px;
-            left: 50%;
-            background-color: #0ea5e9; /* Light blue accent */
-            transition: all 0.3s ease;
-            transform: translateX(-50%);
-        }
-        .nav-btn.active::after {
-            width: 100%;
-        }
-        .nav-btn.active {
-            color: #0ea5e9;
-            font-weight: 500;
-        }
-
-        /* 标签页切换动画 */
-        .tab-content { 
-            display: none; 
-            opacity: 0; 
-            transform: translateY(10px);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-        .tab-content.active { 
-            display: block; 
-            opacity: 1; 
-            transform: translateY(0);
-        }
-
-        /* 时间轴样式 */
-        .timeline-item::before { 
-            content: '📍'; 
-            position: absolute; 
-            left: -14px; 
-            top: 2px; 
-            font-size: 1.2rem; 
-            background: #f8fafc; 
-            border-radius: 50%; 
-        }
-        .timeline-container { 
-            border-left: 2px dashed #94a3b8; 
-            position: relative; 
-            padding-left: 1.5rem; 
-            margin-left: 0.5rem; 
-        }
-
-        /* 卡片悬浮特效 */
-        .hover-card { 
-            transition: transform 0.2s ease, box-shadow 0.2s ease; 
-        }
-        .hover-card:hover { 
-            transform: translateY(-4px); 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); 
-        }
-
-        /* 隐藏卷轴但保留滑动功能 */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>北欧四国+多哈 | 17天专属客制化行程</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family:'Noto Sans SC',sans-serif; background:#f0f4f8; color:#1e293b; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  .nav-btn { position:relative; transition:color .2s; }
+  .nav-btn::after { content:''; position:absolute; width:0; height:2px; bottom:-2px; left:50%; background:#0284c7; transition:all .3s; transform:translateX(-50%); }
+  .nav-btn.active::after { width:100%; }
+  .nav-btn.active { color:#0284c7; font-weight:600; }
+  .hcard { transition:transform .2s,box-shadow .2s; }
+  .hcard:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.1); }
+  .tl-line { border-left:2px dashed #94a3b8; position:relative; padding-left:1.5rem; margin-left:.5rem; }
+  .noscroll::-webkit-scrollbar { display:none; }
+  .noscroll { -ms-overflow-style:none; scrollbar-width:none; }
+  .country-badge { display:inline-block; font-size:.7rem; font-weight:700; padding:.2rem .6rem; border-radius:9999px; }
+  .aurora-glow { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0e7490 70%, #6d28d9 100%); }
+</style>
 </head>
-<body class="antialiased selection:bg-sky-200 selection:text-sky-900">
+<body class="antialiased">
 
-    <!-- 顶部导览列 -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 md:px-6">
-            <div class="flex justify-between items-center h-16">
-                <div class="font-bold text-xl text-sky-700 flex items-center gap-2">
-                    <span>✈️</span>
-                    <span>北欧全景专属规划</span>
-                </div>
-                <!-- 电脑端导览 -->
-                <div class="hidden md:flex space-x-8" id="nav-tabs">
-                    <button class="nav-btn active text-gray-500 hover:text-sky-600 pb-1" data-target="overview">行程总览</button>
-                    <button class="nav-btn text-gray-500 hover:text-sky-600 pb-1" data-target="transport">交通与住宿</button>
-                    <button class="nav-btn text-gray-500 hover:text-sky-600 pb-1" data-target="daily">每日行程</button>
-                    <button class="nav-btn text-gray-500 hover:text-sky-600 pb-1" data-target="food">美食地图</button>
-                    <button class="nav-btn text-gray-500 hover:text-sky-600 pb-1" data-target="prep">行前准备</button>
-                </div>
-                <!-- 手机端导览下拉选单按钮 -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-gray-500 focus:outline-none text-2xl">
-                        ≡
-                    </button>
-                </div>
-            </div>
+<!-- NAV -->
+<nav class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 md:px-6">
+    <div class="flex justify-between items-center h-16">
+      <div class="font-bold text-lg text-sky-700 flex items-center gap-2">
+        <span>✈️</span><span class="hidden sm:inline">北欧四国专属行程</span><span class="sm:hidden">北欧行程</span>
+      </div>
+      <div class="hidden md:flex space-x-6" id="nav-tabs">
+        <button class="nav-btn active text-gray-500 text-sm pb-1" data-target="overview">行程总览</button>
+        <button class="nav-btn text-gray-500 text-sm pb-1" data-target="transport">交通住宿</button>
+        <button class="nav-btn text-gray-500 text-sm pb-1" data-target="daily">每日行程</button>
+        <button class="nav-btn text-gray-500 text-sm pb-1" data-target="food">美食地图</button>
+        <button class="nav-btn text-gray-500 text-sm pb-1" data-target="prep">行前准备</button>
+      </div>
+      <button id="mob-btn" class="md:hidden text-2xl text-gray-600">≡</button>
+    </div>
+  </div>
+  <div id="mob-menu" class="hidden md:hidden bg-white border-t px-4 py-3 space-y-2 shadow-xl absolute w-full">
+    <button class="mob-nav block w-full text-left py-2 text-sm text-sky-600 font-medium" data-target="overview">行程总览</button>
+    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600" data-target="transport">交通住宿</button>
+    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600" data-target="daily">每日行程</button>
+    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600" data-target="food">美食地图</button>
+    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600" data-target="prep">行前准备</button>
+  </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 md:px-6 py-8 mb-24">
+
+<!-- ===== 1. OVERVIEW ===== -->
+<section id="overview" class="tab-content active">
+  <!-- Hero Banner -->
+  <div class="aurora-glow rounded-2xl p-8 md:p-12 mb-8 text-white">
+    <p class="text-sky-300 font-semibold text-sm mb-2 tracking-widest uppercase">03 Oct – 19 Oct 2026 · 17 Days · 2 Adults</p>
+    <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">🇸🇬 → 🇶🇦 → 🇩🇰 → 🇸🇪 → 🇳🇴 → 🇫🇮 → 🇩🇰</h1>
+    <p class="text-sky-100 text-base md:text-lg max-w-3xl leading-relaxed">
+      根据您的最新需求调整：丹麦前段2天、最后压轴1天。挪威独得9天，包含「卑尔根峡湾自驾」、「景观铁路+奥斯陆自然跳岛」，以及全新增加的「特罗姆瑟北极圈秘境」。
+    </p>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
+    <div class="bg-white rounded-xl p-4 text-center hcard border border-gray-100">
+      <div class="text-2xl mb-1">🇶🇦</div>
+      <div class="font-bold text-gray-800">多哈</div>
+      <div class="text-sky-600 font-semibold text-lg">1天</div>
+      <div class="text-xs text-gray-400 mt-1">中转快闪</div>
+    </div>
+    <div class="bg-white rounded-xl p-4 text-center hcard border border-gray-100">
+      <div class="text-2xl mb-1">🇩🇰</div>
+      <div class="font-bold text-gray-800">丹麦</div>
+      <div class="text-sky-600 font-semibold text-lg">3天</div>
+      <div class="text-xs text-gray-400 mt-1">首尾衔接</div>
+    </div>
+    <div class="bg-white rounded-xl p-4 text-center hcard border border-gray-100">
+      <div class="text-2xl mb-1">🇸🇪</div>
+      <div class="font-bold text-gray-800">瑞典</div>
+      <div class="text-sky-600 font-semibold text-lg">2天</div>
+      <div class="text-xs text-gray-400 mt-1">斯德哥尔摩</div>
+    </div>
+    <div class="bg-purple-600 rounded-xl p-4 text-center hcard border border-purple-400 relative overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-br from-purple-700 to-indigo-800 opacity-80"></div>
+      <div class="relative z-10">
+        <div class="text-2xl mb-1">🇳🇴</div>
+        <div class="font-bold text-white">挪威</div>
+        <div class="text-yellow-300 font-bold text-xl">9天</div>
+        <div class="text-xs text-purple-200 mt-1">峡湾+奥斯陆+极光</div>
+      </div>
+    </div>
+    <div class="bg-white rounded-xl p-4 text-center hcard border border-gray-100">
+      <div class="text-2xl mb-1">🇫🇮</div>
+      <div class="font-bold text-gray-800">芬兰</div>
+      <div class="text-sky-600 font-semibold text-lg">2天</div>
+      <div class="text-xs text-gray-400 mt-1">赫尔辛基</div>
+    </div>
+  </div>
+
+  <!-- Route Highlights -->
+  <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 hcard">
+    <h2 class="text-xl font-bold text-gray-800 mb-6">🗺️ 路线亮点 & 行程逻辑</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="space-y-4">
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-sm flex-shrink-0">🇩🇰</div>
+          <div><div class="font-semibold text-gray-700">丹麦首日 (Day 2–3)</div><div class="text-sm text-gray-500">QR159 入境，新港漫步、Reffen 市集、Nordhavn 北港新区海港漫游。</div></div>
         </div>
-        <!-- 手机端菜单 -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-4 space-y-2 shadow-lg absolute w-full left-0">
-            <button class="mobile-nav-btn block w-full text-left py-2 text-sky-600 font-medium" data-target="overview">行程总览</button>
-            <button class="mobile-nav-btn block w-full text-left py-2 text-gray-600" data-target="transport">交通与住宿</button>
-            <button class="mobile-nav-btn block w-full text-left py-2 text-gray-600" data-target="daily">每日行程</button>
-            <button class="mobile-nav-btn block w-full text-left py-2 text-gray-600" data-target="food">美食地图</button>
-            <button class="mobile-nav-btn block w-full text-left py-2 text-gray-600" data-target="prep">行前准备</button>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm flex-shrink-0">🇸🇪</div>
+          <div><div class="font-semibold text-gray-700">瑞典斯德哥尔摩 (Day 4–5)</div><div class="text-sm text-gray-500">X2000 跨海列车抵达，穿梭 Gamla Stan 石板巷弄与 Grünerløkka 文艺街区。</div></div>
         </div>
-    </nav>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-sm flex-shrink-0">🇳🇴</div>
+          <div><div class="font-semibold text-gray-700">卑尔根与峡湾自驾 (Day 6–9)</div><div class="text-sm text-gray-500">卑尔根出发租车，游历 Flåm、纳柔依峡湾游船、Hardangerfjord，全景沉浸。</div></div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-sm flex-shrink-0">🚆</div>
+          <div><div class="font-semibold text-gray-700">奥斯陆与峡湾跳岛 (Day 10–11)</div><div class="text-sm text-gray-500">搭乘景观列车赴奥斯陆，享受 Hovedøya 岛森林漫步，替代博物馆行程。</div></div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-purple-200 flex items-center justify-center text-sm flex-shrink-0 font-bold text-purple-700">★</div>
+          <div><div class="font-semibold text-purple-700">特罗姆瑟北极圈秘境 (Day 12–14) </div><div class="text-sm text-gray-500">飞入北极圈！追极光、Sommarøy 白沙小岛、Ersfjordbotn 峡湾餐厅。</div></div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center text-sm flex-shrink-0">🇫🇮</div>
+          <div><div class="font-semibold text-gray-700">芬兰赫尔辛基 (Day 15–16)</div><div class="text-sm text-gray-500">海滨桑拿体验 Löyly、岩石教堂与 Cafe Regatta 海边肉桂卷。</div></div>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-sm flex-shrink-0">🇩🇰</div>
+          <div><div class="font-semibold text-gray-700">哥本哈根压轴 (Day 16晚–17)</div><div class="text-sm text-gray-500">飞回哥本哈根，在设计餐厅享用告别晚餐，次日早晨退税搭 SQ35 返新。</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- 主内容区 -->
-    <main class="max-w-7xl mx-auto px-4 md:px-6 py-8 mb-20">
+<!-- ===== 2. TRANSPORT & HOTELS ===== -->
+<section id="transport" class="tab-content">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">✈️ 全程交通接驳方案</h2>
+  <div class="grid md:grid-cols-2 gap-6 mb-10">
+    <div class="space-y-4">
+      <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hcard">
+        <div class="flex justify-between mb-2"><span class="font-bold text-sky-700">主航班 (已规划)</span><span class="text-xs bg-sky-100 text-sky-700 px-2 py-1 rounded-full">已定</span></div>
+        <p class="text-sm text-gray-600 mb-1">去程：<b>QR943</b> SIN→DOH &nbsp;+&nbsp; <b>QR159</b> DOH→CPH</p>
+        <p class="text-sm text-gray-600">回程：<b>SQ35</b> CPH→SIN</p>
+      </div>
+      <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hcard">
+        <div class="flex justify-between mb-2"><span class="font-bold text-emerald-700">北欧城际交通</span></div>
+        <div class="space-y-2 text-sm text-gray-600">
+          <p>🚆 <b>哥本哈根→斯德哥尔摩</b>：X2000 高速列车 (~5h)</p>
+          <p>✈️ <b>斯德哥尔摩→卑尔根</b>：内陆航班 (~1.5h)</p>
+          <p>🚆 <b>卑尔根→奥斯陆</b>：Bergensbanen 景观铁路 (~7h)</p>
+          <p>✈️ <b>奥斯陆→特罗姆瑟</b>：Widerøe/Norwegian (~1.5h)</p>
+          <p>✈️ <b>特罗姆瑟→赫尔辛基</b>：内陆航班 (~3h)</p>
+          <p>✈️ <b>赫尔辛基→哥本哈根</b>：Finnair (~1.5h)</p>
+        </div>
+      </div>
+    </div>
+    <div class="bg-amber-50 rounded-xl p-5 shadow-sm border border-amber-100 hcard flex flex-col justify-center">
+      <div class="flex justify-between mb-2"><span class="font-bold text-amber-700">🚗 挪威两段自驾策略</span></div>
+      <p class="text-sm text-gray-700 leading-relaxed mb-4">
+        <b>1. 西峡湾段 (3天)：</b>卑尔根市区借还车。探索 Flåm、Voss 与 Hardangerfjord。<br>
+        <b>2. 北极圈段 (2天)：</b>特罗姆瑟市区租车，随心所欲前往 Sommarøy 白沙岛与 Ersfjordbotn 峡湾边缘找寻无光害极光地。
+      </p>
+    </div>
+  </div>
 
-        <!-- 1. 行程总览 Overview -->
-        <section id="overview" class="tab-content active">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 hover-card">
-                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4 flex items-center gap-3">
-                    🇸🇬 ➔ 🇶🇦 ➔ 🇩🇰 ➔ 🇸🇪 ➔ 🇳🇴 ➔ 🇫🇮
-                </h1>
-                <p class="text-lg text-gray-600 mb-8 leading-relaxed">
-                    为您量身定制的17天北欧四国（丹麦、瑞典、挪威、芬兰）与多哈全景之旅。完全顺路不绕道，并精准满足您「挪威深度停留6天」与「仅在最美峡湾段自驾」的核心需求。行程将都市文化、历史列车、壮丽峡湾与北欧休闲生活完美结合。
-                </p>
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">🏨 精选高性价比住宿</h2>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <!-- 住宿卡片保持之前精选的推荐 -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hcard p-5">
+      <h3 class="font-bold text-amber-800 mb-1">🇶🇦 多哈 (Day 1)</h3>
+      <p class="text-sm text-amber-700 mb-2">Souq Waqif Boutique Hotels</p>
+      <p class="text-sm text-gray-600">一出门即是瓦其夫市场，零交通费，阿拉伯精品风格。</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hcard p-5">
+      <h3 class="font-bold text-red-800 mb-1">🇩🇰 哥本哈根 (Day 2 & Day 16)</h3>
+      <p class="text-sm text-red-700 mb-2">Wakeup Copenhagen – Borgergade</p>
+      <p class="text-sm text-gray-600">市中心最高性价比设计旅馆，步行5分钟至新港。</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hcard p-5">
+      <h3 class="font-bold text-blue-800 mb-1">🇸🇪 斯德哥尔摩 (Day 4)</h3>
+      <p class="text-sm text-blue-700 mb-2">Scandic Continental</p>
+      <p class="text-sm text-gray-600">正对中央车站，跨国火车下来直接入住，含超丰盛早餐。</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hcard p-5">
+      <h3 class="font-bold text-emerald-800 mb-1">🇳🇴 卑尔根 (Day 6 & 9)</h3>
+      <p class="text-sm text-emerald-700 mb-2">Thon Hotel Orion</p>
+      <p class="text-sm text-gray-600">包含免费丰盛晚餐+早餐！在挪威能省下极大餐费。</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hcard p-5">
+      <h3 class="font-bold text-indigo-800 mb-1">🇳🇴 奥斯陆 (Day 10-11)</h3>
+      <p class="text-sm text-indigo-700 mb-2">Citybox Oslo</p>
+      <p class="text-sm text-gray-600">距车站极近，全自助入住设计，评价极高。</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 hcard p-5">
+      <h3 class="font-bold text-purple-800 mb-1">🇳🇴 特罗姆瑟 (Day 12-14)</h3>
+      <p class="text-sm text-purple-700 mb-2">Clarion Hotel The Edge</p>
+      <p class="text-sm text-gray-600">海港边绝佳位置，窗外有海峡景致，极光观赏方便。</p>
+    </div>
+  </div>
+</section>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-sky-50 rounded-xl p-5 border border-sky-100">
-                        <div class="text-sky-700 text-sm font-bold mb-1">📅 旅游日期</div>
-                        <div class="text-gray-800 font-medium">03/10/2026<br>- 19/10/2026 (17天)</div>
-                    </div>
-                    <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-100">
-                        <div class="text-emerald-700 text-sm font-bold mb-1">🇸🇪 🇳🇴 路线串联</div>
-                        <div class="text-gray-800 font-medium">哥本哈根➔斯德哥尔摩<br>➔挪威(6天)➔赫尔辛基</div>
-                    </div>
-                    <div class="bg-amber-50 rounded-xl p-5 border border-amber-100">
-                        <div class="text-amber-700 text-sm font-bold mb-1">🚗 交通特色</div>
-                        <div class="text-gray-800 font-medium">跨国景观火车+内陆航班<br>精华段：卑尔根峡湾自驾</div>
-                    </div>
-                    <div class="bg-rose-50 rounded-xl p-5 border border-rose-100">
-                        <div class="text-rose-700 text-sm font-bold mb-1">💰 预算与风格</div>
-                        <div class="text-gray-800 font-medium">中等预算高性价比<br>休闲自然、美食探索</div>
-                    </div>
-                </div>
+<!-- ===== 3. DAILY ITINERARY ===== -->
+<section id="daily" class="tab-content">
+  <div class="flex flex-col md:flex-row gap-6">
+    <div class="w-full md:w-72 flex-shrink-0">
+      <div class="sticky top-20 bg-white rounded-xl shadow-sm border border-gray-100 p-4 max-h-[80vh] overflow-y-auto noscroll">
+        <h3 class="font-bold text-gray-800 mb-3 border-b pb-2 text-sm">📅 17日行程快速跳转</h3>
+        <div id="day-nav" class="space-y-0.5"></div>
+      </div>
+    </div>
+    <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+      <div id="timeline" class="space-y-12"></div>
+    </div>
+  </div>
+</section>
 
-                <h3 class="text-xl font-bold text-gray-800 mt-10 mb-4">📍 顺路行程亮点分配</h3>
-                <ul class="space-y-3 text-gray-600">
-                    <li class="flex items-start gap-2"><span>✨</span> <b>多哈 (1天)：</b> 中转快闪，感受传统伊斯兰市场与海滨艺术。</li>
-                    <li class="flex items-start gap-2"><span>✨</span> <b>丹麦·哥本哈根 (前后4天)：</b> 进出大门，漫步童话新港，品尝平价米其林概念美食。</li>
-                    <li class="flex items-start gap-2"><span>✨</span> <b>瑞典·斯德哥尔摩 (2天)：</b> 搭乘跨海列车抵达，穿梭老城石板路，探访瓦萨沉船。</li>
-                    <li class="flex items-start gap-2"><span>✨</span> <b>挪威 (核心6天)：</b> 卑尔根出发租车，自驾游览纳柔依与哈当厄尔峡湾；随后搭乘被誉为全球最美的「卑尔根铁路」前往奥斯陆。</li>
-                    <li class="flex items-start gap-2"><span>✨</span> <b>芬兰·赫尔辛基 (3天)：</b> 体验正宗热气蒸腾的芬兰桑拿，品尝浓郁三文鱼汤。</li>
-                </ul>
+<!-- ===== 4. FOOD MAP ===== -->
+<section id="food" class="tab-content">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <h2 class="text-2xl font-bold text-gray-800">🍽️ 必吃美食推荐</h2>
+    <div class="flex flex-wrap gap-2" id="food-filters">
+      <button class="filter-btn active text-sm px-4 py-1.5 rounded-full bg-sky-600 text-white font-medium" data-filter="all">全部</button>
+      <button class="filter-btn text-sm px-4 py-1.5 rounded-full bg-gray-100 text-gray-600" data-filter="在地料理">在地料理</button>
+      <button class="filter-btn text-sm px-4 py-1.5 rounded-full bg-gray-100 text-gray-600" data-filter="海鲜">海鲜</button>
+      <button class="filter-btn text-sm px-4 py-1.5 rounded-full bg-gray-100 text-gray-600" data-filter="小吃甜点">小吃甜点</button>
+    </div>
+  </div>
+  <div id="food-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+</section>
+
+<!-- ===== 5. PREP ===== -->
+<section id="prep" class="tab-content">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">🎒 行前实用准备</h2>
+  <div class="grid sm:grid-cols-2 gap-5">
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hcard">
+      <h3 class="font-bold text-sky-700 mb-3">⛅ 10月天气与穿搭</h3>
+      <ul class="text-sm text-gray-600 space-y-2">
+        <li>• <b>特罗姆瑟 (北极圈)：</b>0–6°C，极有可能下雪！需保暖防水冲锋衣+内胆。</li>
+        <li>• <b>南边北欧三国：</b>5–12°C，秋凉风大。</li>
+        <li>• 建议洋葱式穿搭。</li>
+      </ul>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hcard">
+      <h3 class="font-bold text-sky-700 mb-3">🌌 特罗姆瑟极光须知</h3>
+      <ul class="text-sm text-gray-600 space-y-2">
+        <li>• 秋分后极光活动强。每晚约9pm–2am是最高概率时段。</li>
+        <li>• 下车远离市区前往 Ersfjordbotn 峡湾等无光害处。</li>
+        <li>• 若非自驾日，推荐报名「极光小巴追逐团」(Best Arctic 评价佳)，向导会驾车寻晴天缺口。</li>
+      </ul>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hcard">
+      <h3 class="font-bold text-sky-700 mb-3">🚗 挪威双重自驾</h3>
+      <ul class="text-sm text-gray-600 space-y-2">
+        <li>• <b>卑尔根段：</b>峡湾公路，遇滚装渡轮可直接开上去。</li>
+        <li>• <b>特罗姆瑟段：</b>10月路面可能开始结冰，租车时确认是否配置冬季雪胎(Studded tires)。</li>
+        <li>• 带好国际驾照与新国驾照。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ---- NAV ----
+const allBtns = document.querySelectorAll('.nav-btn, .mob-nav');
+const sections = document.querySelectorAll('.tab-content');
+const mobMenu = document.getElementById('mob-menu');
+document.getElementById('mob-btn').addEventListener('click', () => mobMenu.classList.toggle('hidden'));
+
+function switchTab(id) {
+  sections.forEach(s => s.classList.remove('active'));
+  allBtns.forEach(b => {
+    b.classList.remove('active','text-sky-600','font-semibold','font-medium');
+    if (b.classList.contains('nav-btn')) b.classList.add('text-gray-500');
+    else b.classList.add('text-gray-600');
+    if (b.dataset.target === id) {
+      b.classList.add('active');
+      b.classList.remove('text-gray-500','text-gray-600');
+      b.classList.add(b.classList.contains('nav-btn') ? 'text-sky-600' : 'text-sky-600');
+    }
+  });
+  document.getElementById(id).classList.add('active');
+  mobMenu.classList.add('hidden');
+}
+allBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.target)));
+
+// ---- ITINERARY DATA ----
+const days = [
+  { day:'Day 1', date:'03/10', loc:'🇸🇬 新加坡 → 🇶🇦 多哈', tag:'QA', desc:'出发 & 多哈一日快闪', events:[
+    {t:'02:00',d:'7.5h',a:'搭乘 QR943 航班飞往多哈',m:'✈️ 航班',link:'https://maps.google.com/?q=Hamad+International+Airport'},
+    {t:'10:00',d:'2.5h',a:'参观 伊斯兰艺术博物馆 (MIA) — 贝聿铭设计',m:'🚕 计程车',link:'https://maps.google.com/?q=Museum+of+Islamic+Art+Doha'},
+    {t:'16:00',d:'3h',a:'瓦其夫传统市场 (Souq Waqif) 闲逛，品尝中东晚餐',m:'🚶 步行',link:'https://maps.google.com/?q=Souq+Waqif'}
+  ]},
+  { day:'Day 2', date:'04/10', loc:'🇶🇦 多哈 → 🇩🇰 哥本哈根', tag:'DK', desc:'抵达童话王国', events:[
+    {t:'08:00',d:'6h',a:'搭乘 QR159 飞往哥本哈根',m:'✈️ 航班',link:'https://maps.google.com/?q=Copenhagen+Airport'},
+    {t:'14:30',d:'1h',a:'地铁前往市区，酒店入住',m:'🚇 地铁',link:'https://maps.google.com/?q=Wakeup+Copenhagen'},
+    {t:'16:00',d:'3h',a:'新港 (Nyhavn) 彩色码头漫步，阿马林堡宫外观',m:'🚶 步行',link:'https://maps.google.com/?q=Nyhavn'}
+  ]},
+  { day:'Day 3', date:'05/10', loc:'🇩🇰 哥本哈根', tag:'DK', desc:'在地美食与新港区', events:[
+    {t:'10:30',d:'2h',a:'Torvehallerne 美食广场享用道地开放式三明治',m:'🚶 步行',link:'https://maps.google.com/?q=TorvehallerneKBH'},
+    {t:'13:00',d:'1.5h',a:'运河游船，水上欣赏建筑',m:'⛴️ 游船',link:'https://maps.google.com/?q=Canal+Tours+Copenhagen'},
+    {t:'15:00',d:'3h',a:'Reffen 全北欧最大露天美食市集 ＋ Nordhavn 北港新区海港漫步（完全避开游乐园）',m:'🚇 地铁',link:'https://maps.google.com/?q=Reffen+Copenhagen'}
+  ]},
+  { day:'Day 4', date:'06/10', loc:'🇩🇰 哥本哈根 → 🇸🇪 斯德哥尔摩', tag:'SE', desc:'跨海列车入瑞典', events:[
+    {t:'09:00',d:'5.5h',a:'搭乘 X2000 高速列车，前往斯德哥尔摩',m:'🚆 跨国列车',link:'https://maps.google.com/?q=Stockholm+Central+Station'},
+    {t:'14:30',d:'1h',a:'入住车站旁 Scandic 酒店',m:'🚶 步行',link:'https://maps.google.com/?q=Scandic+Continental+Stockholm'},
+    {t:'16:00',d:'2.5h',a:'漫步老城 Gamla Stan，石板巷弄与皇宫广场',m:'🚶 步行',link:'https://maps.google.com/?q=Gamla+Stan+Stockholm'}
+  ]},
+  { day:'Day 5', date:'07/10', loc:'🇸🇪 斯德哥尔摩', tag:'SE', desc:'老城与文艺街区', events:[
+    {t:'10:00',d:'2.5h',a:'斯德哥尔摩王宫周边与运河旁散步，绝佳秋色',m:'🚶 步行',link:'https://maps.google.com/?q=The+Royal+Palace+Stockholm'},
+    {t:'13:00',d:'1.5h',a:'午餐：Meatballs for the People 瑞典传统肉丸',m:'🚶 步行',link:'https://maps.google.com/?q=Meatballs+for+the+People'},
+    {t:'15:00',d:'3h',a:'Södermalm 南城文艺街区漫步，独立咖啡馆区',m:'🚶 步行',link:'https://maps.google.com/?q=Södermalm+Stockholm'}
+  ]},
+  { day:'Day 6', date:'08/10', loc:'🇸🇪 斯德哥尔摩 → 🇳🇴 卑尔根', tag:'NO', desc:'挪威 Day 1 — 飞抵西海岸', events:[
+    {t:'11:00',d:'1.5h',a:'搭乘航班飞往卑尔根',m:'✈️ 航班',link:'https://maps.google.com/?q=Bergen+Airport'},
+    {t:'14:00',d:'2h',a:'世界遗产布吕根 (Bryggen) 木屋探访',m:'🚌 机场巴士',link:'https://maps.google.com/?q=Bryggen'},
+    {t:'16:30',d:'1.5h',a:'搭乘 Fløyen 缆车登顶看海港日落',m:'🚠 缆车',link:'https://maps.google.com/?q=Floibanen+Bergen'}
+  ]},
+  { day:'Day 7', date:'09/10', loc:'🇳🇴 卑尔根 → 峡湾', tag:'NO', desc:'挪威 Day 2 — 租车进峡湾', events:[
+    {t:'09:00',d:'1h',a:'卑尔根市区租车，开启自驾',m:'🚗 自驾',link:'https://maps.google.com/?q=Bergen'},
+    {t:'10:30',d:'1.5h',a:'驾车经 Voss，欣赏 Tvindefossen 瀑布',m:'🚗 自驾',link:'https://maps.google.com/?q=Tvindefossen'},
+    {t:'13:00',d:'2h',a:'Gudvangen 体验纳柔依峡湾游船',m:'⛴️ 游船',link:'https://maps.google.com/?q=Gudvangen'},
+    {t:'16:00',d:'1h',a:'入住弗洛姆 (Flåm) 周边',m:'🚗 自驾',link:'https://maps.google.com/?q=Flam'}
+  ]},
+  { day:'Day 8', date:'10/10', loc:'🇳🇴 峡湾自驾', tag:'NO', desc:'挪威 Day 3 — 观景台与果园峡湾', events:[
+    {t:'10:00',d:'1h',a:'盘山至 Stegastein 观景台',m:'🚗 自驾',link:'https://maps.google.com/?q=Stegastein+Viewpoint'},
+    {t:'12:00',d:'3h',a:'深入 Hardangerfjord 哈当厄尔果园峡湾区',m:'🚗 自驾',link:'https://maps.google.com/?q=Hardangerfjord'},
+    {t:'16:30',d:'1h',a:'欣赏 Vøringfossen 大瀑布',m:'🚶 步行',link:'https://maps.google.com/?q=Voringsfossen'}
+  ]},
+  { day:'Day 9', date:'11/10', loc:'🇳🇴 峡湾 → 卑尔根', tag:'NO', desc:'挪威 Day 4 — 慢驾回城', events:[
+    {t:'10:00',d:'3h',a:'沿国家旅游路线慢驾回卑尔根，沿途停车拍照',m:'🚗 自驾',link:'https://maps.google.com/?q=Bergen'},
+    {t:'14:00',d:'1h',a:'市区还车',m:'🚗 还车',link:'https://maps.google.com/?q=Bergen'},
+    {t:'16:00',d:'2h',a:'卑尔根鱼市场晚餐',m:'🚶 步行',link:'https://maps.google.com/?q=Fish+Market+Bergen'}
+  ]},
+  { day:'Day 10', date:'12/10', loc:'🇳🇴 卑尔根 → 奥斯陆', tag:'NO', desc:'挪威 Day 5 — 全球最美铁路', events:[
+    {t:'08:00',d:'7h',a:'搭乘 Bergensbanen 景观铁路穿越高原与冰川湖',m:'🚆 景观列车',link:'https://maps.google.com/?q=Oslo+Central+Station'},
+    {t:'15:30',d:'1h',a:'抵达奥斯陆，入住酒店',m:'🚶 步行',link:'https://maps.google.com/?q=Oslo'},
+    {t:'17:00',d:'2h',a:'奥斯陆歌剧院屋顶散步看海湾日落',m:'🚶 步行',link:'https://maps.google.com/?q=Oslo+Opera+House'}
+  ]},
+  { day:'Day 11', date:'13/10', loc:'🇳🇴 奥斯陆', tag:'NO', desc:'挪威 Day 6 — 峡湾群岛跳岛', events:[
+    {t:'10:00',d:'3h',a:'搭渡轮前往奥斯陆群岛跳岛，于 Hovedøya 岛森林与修道院遗址自然徒步（取代博物馆）',m:'⛴️ 公共渡轮',link:'https://maps.google.com/?q=Hovedoya+Island+Oslo'},
+    {t:'14:30',d:'2h',a:'Aker Brygge 码头区享用海鲜午餐',m:'🚶 步行',link:'https://maps.google.com/?q=Aker+Brygge'},
+    {t:'16:30',d:'2h',a:'漫步 Grünerløkka 文艺街区',m:'🚶 步行',link:'https://maps.google.com/?q=Grunerløkka+Oslo'}
+  ]},
+  { day:'Day 12', date:'14/10', loc:'🇳🇴 奥斯陆 → 特罗姆瑟', tag:'NO-ARCTIC', desc:'挪威 Day 7 — 飞入北极圈 🌌', events:[
+    {t:'09:30',d:'1.5h',a:'飞往特罗姆瑟（北极圈内）',m:'✈️ 航班',link:'https://maps.google.com/?q=Tromso+Airport'},
+    {t:'12:00',d:'1h',a:'抵达办理入住 Clarion Hotel The Edge',m:'🚌 巴士',link:'https://maps.google.com/?q=Clarion+Hotel+The+Edge+Tromso'},
+    {t:'14:00',d:'2.5h',a:'搭 Fjellheisen 缆车俯瞰特罗姆瑟峡湾全景',m:'🚠 缆车',link:'https://maps.google.com/?q=Fjellheisen+Tromso'},
+    {t:'21:00',d:'2h',a:'🌌 夜间开启极光追逐（天气佳可直接见）',m:'🌌 极光',link:'https://maps.google.com/?q=Tromso+Northern+Lights'}
+  ]},
+  { day:'Day 13', date:'15/10', loc:'🇳🇴 特罗姆瑟近郊自驾', tag:'NO-ARCTIC', desc:'挪威 Day 8 — 白沙滩岛 & 峡湾餐桌', events:[
+    {t:'10:00',d:'1h',a:'特罗姆瑟租车，前往 Sommarøy 白沙滩岛',m:'🚗 自驾',link:'https://maps.google.com/?q=Sommaroy'},
+    {t:'11:00',d:'2.5h',a:'Sommarøy 漫步翡翠海水沙滩与渔村风情',m:'🚶 步行',link:'https://maps.google.com/?q=Sommaroy'},
+    {t:'15:00',d:'1.5h',a:'驾车至 Ersfjordbotn 峡湾边缘',m:'🚗 自驾',link:'https://maps.google.com/?q=Ersfjordbotn'},
+    {t:'17:30',d:'2h',a:'Ersfjordbotn Brygge 餐厅晚餐（背倚绝壁、面峡湾）',m:'🍽️ 晚餐',link:'https://maps.google.com/?q=Ersfjordbotn+Brygge'},
+    {t:'21:00',d:'2h',a:'🌌 在无光害的 Ersfjordbotn 峡湾等极光爆发',m:'🌌 极光',link:'https://maps.google.com/?q=Ersfjordbotn'}
+  ]},
+  { day:'Day 14', date:'16/10', loc:'🇳🇴 特罗姆瑟', tag:'NO-ARCTIC', desc:'挪威 Day 9 — 极光最后之夜', events:[
+    {t:'10:00',d:'2h',a:'北极大教堂 (Arctic Cathedral) 欣赏玻璃彩窗',m:'🚶 步行',link:'https://maps.google.com/?q=Arctic+Cathedral+Tromso'},
+    {t:'13:00',d:'3h',a:'Prestvannet 湖边秋色健行或市区随意漫步',m:'🥾 徒步',link:'https://maps.google.com/?q=Prestvannet+Lake+Tromso'},
+    {t:'20:00',d:'3h',a:'🌌 报名当地专业极光小车团，向导找寻晴天区做最后追逐',m:'🌌 极光团',link:'https://maps.google.com/?q=Northern+Lights+Tromso'}
+  ]},
+  { day:'Day 15', date:'17/10', loc:'🇳🇴 特罗姆瑟 → 🇫🇮 赫尔辛基', tag:'FI', desc:'飞往芬兰', events:[
+    {t:'10:00',d:'3h',a:'搭乘航班前往赫尔辛基',m:'✈️ 航班',link:'https://maps.google.com/?q=Helsinki+Airport'},
+    {t:'15:00',d:'1h',a:'抵达市区入住酒店',m:'🚇 快线',link:'https://maps.google.com/?q=Helsinki'},
+    {t:'16:30',d:'2h',a:'参议院广场白教堂与海港闲逛',m:'🚶 步行',link:'https://maps.google.com/?q=Helsinki+Cathedral'}
+  ]},
+  { day:'Day 16', date:'18/10', loc:'🇫🇮 赫尔辛基 → 🇩🇰 哥本哈根', tag:'DK-END', desc:'芬兰桑拿与重返丹麦压轴', events:[
+    {t:'09:30',d:'2h',a:'Cafe Regatta 海边红木屋肉桂卷，岩石教堂参观',m:'🚶 步行',link:'https://maps.google.com/?q=Cafe+Regatta'},
+    {t:'12:00',d:'2.5h',a:'Löyly Helsinki 体验芬兰海滨桑拿，享用三文鱼汤午餐',m:'🚶 步行',link:'https://maps.google.com/?q=Loyly+Helsinki'},
+    {t:'16:00',d:'1.5h',a:'搭乘 Finnair 航班返回哥本哈根（压轴之夜）',m:'✈️ 航班',link:'https://maps.google.com/?q=Copenhagen+Airport'},
+    {t:'19:30',d:'2h',a:'抵达哥本哈根，在设计餐厅享用告别晚餐',m:'🍽️ 晚餐',link:'https://maps.google.com/?q=Copenhagen'}
+  ]},
+  { day:'Day 17', date:'19/10', loc:'🇩🇰 哥本哈根 → 🇸🇬 新加坡', tag:'HOME', desc:'满载回忆，平安归来', events:[
+    {t:'09:00',d:'1h',a:'市区漫步买杯咖啡，前往机场办理退税',m:'🚇 地铁',link:'https://maps.google.com/?q=Copenhagen+Airport'},
+    {t:'12:20',d:'12h',a:'搭乘 SQ35 直飞新加坡，完美结束北欧之旅！',m:'✈️ SQ35',link:'https://maps.google.com/?q=Changi+Airport'}
+  ]}
+];
+
+const tagColor = {
+  'QA':'bg-amber-100 text-amber-700',
+  'DK':'bg-red-100 text-red-700',
+  'SE':'bg-blue-100 text-blue-700',
+  'NO':'bg-emerald-100 text-emerald-700',
+  'NO-ARCTIC':'bg-purple-200 text-purple-800',
+  'FI':'bg-cyan-100 text-cyan-700',
+  'DK-END':'bg-rose-100 text-rose-700',
+  'HOME':'bg-gray-100 text-gray-600'
+};
+const tagLabel = { 'QA':'多哈','DK':'丹麦','SE':'瑞典','NO':'🇳🇴挪威','NO-ARCTIC':'🌌北极圈','FI':'芬兰','DK-END':'丹麦压轴','HOME':'回程' };
+
+const nav = document.getElementById('day-nav');
+const tl = document.getElementById('timeline');
+
+days.forEach((day, i) => {
+  const id = `day-${i+1}`;
+  const a = document.createElement('a');
+  a.href = `#${id}`;
+  a.className = 'block px-3 py-2 rounded-lg text-xs text-gray-600 hover:bg-sky-50 hover:text-sky-700 transition-colors flex items-center gap-2';
+  a.innerHTML = `<span class="country-badge ${tagColor[day.tag]} w-16 text-center">${tagLabel[day.tag]}</span><span>${day.day}</span>`;
+  a.addEventListener('click', e => { e.preventDefault(); document.getElementById(id).scrollIntoView({behavior:'smooth'}); });
+  nav.appendChild(a);
+
+  const evHtml = day.events.map(ev => `
+    <div class="tl-line pb-6">
+      <div class="flex flex-wrap gap-2 items-center mb-1.5">
+        <span class="font-bold text-sky-600 text-sm">${ev.t}</span>
+        <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md">⏱ ${ev.d}</span>
+        <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md border border-emerald-100">${ev.m}</span>
+      </div>
+      <p class="text-gray-700 font-medium text-sm mb-2 leading-relaxed">${ev.a}</p>
+      <a href="${ev.link}" target="_blank" class="text-xs text-blue-500 hover:text-blue-700 underline underline-offset-2">🔗 Google Maps 导航</a>
+    </div>
+  `).join('');
+
+  const arcticBg = day.tag === 'NO-ARCTIC' ? 'bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200' : 'border-gray-100';
+
+  tl.insertAdjacentHTML('beforeend', `
+    <div id="${id}" class="scroll-mt-24 pt-4 border-t border-gray-100 first:border-0 first:pt-0">
+      <div class="flex flex-wrap items-center gap-3 mb-5">
+        <span class="country-badge ${tagColor[day.tag]} text-xs">${tagLabel[day.tag]}</span>
+        <span class="text-2xl font-bold text-gray-800">${day.day}</span>
+        <span class="text-gray-400 text-sm">${day.date}</span>
+      </div>
+      <h4 class="font-bold text-sky-700 text-base mb-1">${day.loc}</h4>
+      <p class="text-xs text-gray-400 mb-5">☀️ ${day.desc}</p>
+      <div class="rounded-xl p-4 border ${arcticBg}">${evHtml}</div>
+    </div>
+  `);
+});
+
+// ---- FOOD ----
+const foods = [
+  { name:'HØST', city:'哥本哈根', type:'在地料理', desc:'新北欧料理，连续荣获设计大奖，可安排在Day 16压轴之夜。', map:'https://maps.google.com/?q=Host+Copenhagen' },
+  { name:'Torvehallerne 市集', city:'哥本哈根', type:'小吃甜点', desc:'必吃 Smørrebrød（开放式三明治）及精品咖啡。', map:'https://maps.google.com/?q=TorvehallerneKBH' },
+  { name:'Meatballs for the People', city:'斯德哥尔摩', type:'在地料理', desc:'全市公认最正宗瑞典肉丸，有传统猪牛肉与驯鹿肉。', map:'https://maps.google.com/?q=Meatballs+for+the+People' },
+  { name:'Bryggeloftet & Stuene', city:'卑尔根', type:'海鲜', desc:'布吕根码头百年老店，新鲜峡湾海鲜与鱼汤。', map:'https://maps.google.com/?q=Bryggeloftet+Bergen' },
+  { name:'Ersfjordbotn Brygge', city:'特罗姆瑟', type:'海鲜', desc:'峡湾尽头的餐厅！背倚绝壁面峡湾，无光害极光观测地。', map:'https://maps.google.com/?q=Ersfjordbotn+Brygge' },
+  { name:'Löyly', city:'赫尔辛基', type:'海鲜', desc:'海滨桑拿名所，奶油三文鱼汤浓郁鲜甜。', map:'https://maps.google.com/?q=Loyly+Helsinki' }
+];
+
+const grid = document.getElementById('food-grid');
+const fBtns = document.querySelectorAll('.filter-btn');
+
+function renderFood(f) {
+  grid.innerHTML = '';
+  (f === 'all' ? foods : foods.filter(x => x.type === f)).forEach(fd => {
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hcard flex flex-col">
+        <div class="p-5 flex-grow">
+          <div class="flex justify-between items-start mb-3">
+            <div>
+              <h3 class="font-bold text-gray-800">${fd.name}</h3>
+              <p class="text-xs text-gray-400 mt-0.5">📍 ${fd.city}</p>
             </div>
-        </section>
-
-        <!-- 2. 交通与住宿 Transport & Hotels -->
-        <section id="transport" class="tab-content">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span>✈️</span> 交通方式与跨国接驳</h2>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-                <!-- 航班与城际交通资讯 -->
-                <div class="space-y-4">
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover-card">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-sky-700">去回程主航班 (已定)</span>
-                            <span class="text-xs bg-sky-100 text-sky-800 px-2 py-1 rounded-full">已规划</span>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-1"><b>去程:</b> QR943 (SIN➔DOH) & QR159 (DOH➔CPH)</p>
-                        <p class="text-sm text-gray-600"><b>回程:</b> SQ35 (CPH➔SIN)</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover-card">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-emerald-700">北欧城际交通 (顺路规划)</span>
-                            <span class="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full">最优推荐</span>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-1"><b>哥本哈根 ➔ 斯德哥尔摩:</b> 🚆 X2000 高速列车 (~5小时) — 市区直达市区，沿途欣赏跨海大桥与瑞典森林。</p>
-                        <p class="text-sm text-gray-600 mb-1"><b>斯德哥尔摩 ➔ 卑尔根:</b> ✈️ 航班 (SAS/Norwegian, ~1.5小时) — 快速跨越山脉，直接抵达峡湾门户。</p>
-                        <p class="text-sm text-gray-600 mb-1"><b>卑尔根 ➔ 奥斯陆:</b> 🚆 卑尔根景观铁路 (~7小时) — 挪威缩影精华段，不自驾也能看雪山冰川。</p>
-                        <p class="text-sm text-gray-600 mb-1"><b>奥斯陆 ➔ 赫尔辛基:</b> ✈️ 航班 (Finnair/Norwegian, ~1.5小时)。</p>
-                        <p class="text-sm text-gray-600"><b>赫尔辛基 ➔ 哥本哈根:</b> ✈️ 航班 (Finnair, ~1.5小时)。</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover-card">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-bold text-amber-700">挪威峡湾自驾段 (最值得开车之处)</span>
-                            <span class="text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-full">核心体验</span>
-                        </div>
-                        <p class="text-sm text-gray-600">在卑尔根 (Bergen) 租车，自驾3天探索周边峡湾 (Flåm, Voss, Hardangerfjord)，随后于卑尔根市区还车，免去高昂的异地还车费，随走随停最享受。</p>
-                    </div>
-                </div>
-
-                <!-- 交互式图表 (Chart.js) -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center">
-                    <h3 class="text-center font-bold text-gray-700 mb-4 text-sm">卑尔根 ➔ 奥斯陆 交通方式深度比对</h3>
-                    <div class="relative w-full h-64">
-                        <canvas id="transportChart"></canvas>
-                    </div>
-                    <p class="text-xs text-gray-500 mt-4 text-center">💡 综合考量体验，极其推荐<b>景观列车</b>。虽然耗时，但被誉为世界最美铁路线，本身就是一个大型景点。</p>
-                </div>
-            </div>
-
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2 mt-12"><span>🏨</span> 各地精选中等预算住宿 (重点推荐)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 住宿卡片 1 -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover-card flex flex-col">
-                    <div class="bg-sky-100 p-4 border-b border-sky-200">
-                        <h3 class="font-bold text-sky-900 text-lg">瑞典·斯德哥尔摩</h3>
-                        <p class="text-sky-800 text-sm">Downtown Camper by Scandic</p>
-                    </div>
-                    <div class="p-4 flex-grow space-y-3">
-                        <p class="text-sm text-gray-600"><b>大致价格：</b> $130 - $160 USD / 晚</p>
-                        <p class="text-sm text-gray-600"><b>设施：</b> 顶楼恒温泳池与桑拿、绝佳市区位置、免费借用脚踏车、丰富的斯堪地那维亚早餐。</p>
-                    </div>
-                </div>
-                <!-- 住宿卡片 2 -->
-                <div class="bg-emerald-100 rounded-xl shadow-sm border border-gray-100 overflow-hidden hover-card flex flex-col">
-                    <div class="bg-emerald-200 p-4 border-b border-emerald-300">
-                        <h3 class="font-bold text-emerald-900 text-lg">挪威·卑尔根</h3>
-                        <p class="text-emerald-800 text-sm">Thon Hotel Orion</p>
-                    </div>
-                    <div class="p-4 flex-grow space-y-3">
-                        <p class="text-sm text-gray-600"><b>大致价格：</b> $150 - $180 USD / 晚</p>
-                        <p class="text-sm text-gray-600"><b>设施：</b> <b>提供免费丰盛晚餐与早餐</b> (在挪威能省下极大餐费)，距离布吕根码头极近。</p>
-                    </div>
-                </div>
-                <!-- 住宿卡片 3 -->
-                <div class="bg-amber-100 rounded-xl shadow-sm border border-gray-100 overflow-hidden hover-card flex flex-col">
-                    <div class="bg-amber-200 p-4 border-b border-amber-300">
-                        <h3 class="font-bold text-amber-900 text-lg">挪威·峡湾区 (Flåm周边)</h3>
-                        <p class="text-amber-800 text-sm">Flåmsbrygga Hotel</p>
-                    </div>
-                    <div class="p-4 flex-grow space-y-3">
-                        <p class="text-sm text-gray-600"><b>大致价格：</b> $180 - $220 USD / 晚</p>
-                        <p class="text-sm text-gray-600"><b>设施：</b> 峡湾风情小木屋，客房阳台直面绝美艾于兰峡湾，附设知名自酿啤酒厂餐厅。</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. 每日行程 Daily Itinerary -->
-        <section id="daily" class="tab-content">
-            <div class="flex flex-col md:flex-row gap-8">
-                <!-- 侧边天数导航 -->
-                <div class="w-full md:w-1/4">
-                    <div class="sticky top-20 bg-white rounded-xl shadow-sm border border-gray-100 p-4 max-h-[80vh] overflow-y-auto no-scrollbar">
-                        <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">📅 17日行程快速跳转</h3>
-                        <div id="day-nav-container" class="space-y-1">
-                            <!-- JS 动态生成 -->
-                        </div>
-                    </div>
-                </div>
-                <!-- 时间轴内容 -->
-                <div class="w-full md:w-3/4">
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
-                        <div id="timeline-container" class="space-y-12">
-                            <!-- JS 动态生成 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. 美食地图 Food Map -->
-        <section id="food" class="tab-content">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><span>🍽️</span> 必吃美食推荐</h2>
-
-                <!-- 互动式筛选器 -->
-                <div class="mt-4 sm:mt-0 flex flex-wrap gap-2" id="food-filters">
-                    <button class="filter-btn active px-4 py-1.5 rounded-full text-sm font-medium bg-sky-600 text-white" data-filter="all">全部</button>
-                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-sky-50 hover:text-sky-600" data-filter="北欧料理">在地料理</button>
-                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-sky-50 hover:text-sky-600" data-filter="海鲜">海鲜</button>
-                    <button class="filter-btn px-4 py-1.5 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-sky-50 hover:text-sky-600" data-filter="小吃/快餐">小吃甜点</button>
-                </div>
-            </div>
-
-            <div id="food-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- JS 动态生成 -->
-            </div>
-        </section>
-
-        <!-- 5. 行前准备 Prep -->
-        <section id="prep" class="tab-content">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2"><span>🎒</span> 实用行前准备</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-card">
-                    <h3 class="font-bold text-sky-700 text-lg mb-3 flex items-center gap-2"><span>⛅</span> 10月天气与穿搭</h3>
-                    <ul class="space-y-2 text-gray-600 text-sm">
-                        <li>• <b>北欧四国：</b> 秋季微凉，气温约 5°C - 12°C。峡湾风大且易变天。</li>
-                        <li>• <b>穿搭建议：</b> 「洋葱式穿法」。备好防风防水的薄羽绒/冲锋衣外套（峡湾自驾必备），内搭长袖，舒适好走的防水运动鞋。多哈中转准备短袖。</li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-card">
-                    <h3 class="font-bold text-sky-700 text-lg mb-3 flex items-center gap-2"><span>💳</span> 多元货币与支付</h3>
-                    <ul class="space-y-2 text-gray-600 text-sm">
-                        <li>• <b>货币群：</b> 丹麦克朗(DKK)、瑞典克朗(SEK)、挪威克朗(NOK)、芬兰欧元(EUR)。</li>
-                        <li>• <b>支付习惯：</b> 北欧是全球最彻底的 <b>无现金 (Cashless)</b> 地区。超市、公厕甚至路边摊都刷卡。请带2张支持海外感应支付(PayWave)且开通PIN码的信用卡，<b>完全不需要换外币现金</b>。</li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-card">
-                    <h3 class="font-bold text-sky-700 text-lg mb-3 flex items-center gap-2"><span>🚗</span> 挪威峡湾自驾须知</h3>
-                    <ul class="space-y-2 text-gray-600 text-sm">
-                        <li>• <b>驾照：</b> 需携带国际驾照 (IDP) 以及新加坡本国驾照正本。</li>
-                        <li>• <b>路况：</b> 峡湾道路较窄且弯多，沿途风景极美，务必在指定的观景点 (Viewpoint) 停车。出行前用 <b>Statens vegvesen</b> 查询路况。</li>
-                        <li>• <b>过路费与渡轮：</b> 租车通常配备 AutoPass，过路费及驶入滚装渡轮的费用，事后会从信用卡统一扣款，不需当场缴现金。</li>
-                    </ul>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-card">
-                    <h3 class="font-bold text-sky-700 text-lg mb-3 flex items-center gap-2"><span>📱</span> 交通票券预订</h3>
-                    <ul class="space-y-2 text-gray-600 text-sm">
-                        <li>• <b>跨国火车：</b> 哥本哈根➔斯德哥尔摩 (SJ 官网) 及 卑尔根➔奥斯陆 (Vy 官网) 的火车票，建议提前 2-3 个月预订以获取早鸟优惠。</li>
-                        <li>• <b>网路：</b> 推荐购买覆盖全欧洲的 eSIM，抵达即可自动切换网络，保障自驾导航畅通无阻。</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <script>
-        // --- 1. 导航列切换逻辑 ---
-        const navBtns = document.querySelectorAll('.nav-btn, .mobile-nav-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        function switchTab(targetId) {
-            tabContents.forEach(content => content.classList.remove('active'));
-            navBtns.forEach(btn => {
-                btn.classList.remove('active', 'text-sky-600', 'font-medium');
-                btn.classList.add('text-gray-500');
-                if(btn.dataset.target === targetId && btn.classList.contains('nav-btn')) {
-                    btn.classList.add('active', 'text-sky-600');
-                    btn.classList.remove('text-gray-500');
-                }
-                if(btn.dataset.target === targetId && btn.classList.contains('mobile-nav-btn')) {
-                    btn.classList.add('text-sky-600', 'font-medium');
-                    btn.classList.remove('text-gray-600');
-                }
-            });
-
-            const targetEl = document.getElementById(targetId);
-            if(targetEl) targetEl.classList.add('active');
-            mobileMenu.classList.add('hidden');
-
-            if(targetId === 'transport') window.dispatchEvent(new Event('resize'));
-        }
-
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => switchTab(e.target.dataset.target));
-        });
-
-        mobileMenuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
-
-
-        // --- 2. Chart.js 互动图表初始化 ---
-        const ctx = document.getElementById('transportChart').getContext('2d');
-        Chart.defaults.font.family = "'Noto Sans SC', sans-serif";
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['🚆 景观列车 (Vy)', '✈️ 内陆航班', '🚌 长途巴士'],
-                datasets: [
-                    {
-                        label: '预估单人费用 (USD, 提早买)',
-                        data: [60, 110, 50],
-                        backgroundColor: 'rgba(14, 165, 233, 0.7)', // Sky-500
-                        borderColor: 'rgba(14, 165, 233, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    },
-                    {
-                        label: '耗时 (小时)',
-                        data: [7, 1.5, 13],
-                        backgroundColor: 'rgba(16, 185, 129, 0.7)', // Emerald-500
-                        borderColor: 'rgba(16, 185, 129, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) label += ': ';
-                                if (context.datasetIndex === 0) label += '$' + context.parsed.y;
-                                else label += context.parsed.y + ' 小时';
-                                return label;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-
-
-        // --- 3. 每日行程数据与渲染 ---
-        const itineraryData = [
-            { day: "Day 1", date: "03/10", location: "🇸🇬 新加坡 ➔ 🇶🇦 多哈", desc: "出发与多哈一日快闪", events: [
-                { time: "02:00", dur: "7.5h", action: "搭乘 QR943 航班飞往多哈", mode: "✈️ 航班", link: "https://maps.google.com/?q=Hamad+International+Airport" },
-                { time: "10:00", dur: "2.5h", action: "参观 贝聿铭设计的 伊斯兰艺术博物馆 (MIA)", mode: "🚶 步行", link: "https://maps.google.com/?q=Museum+of+Islamic+Art+Doha" },
-                { time: "16:00", dur: "3h", action: "瓦其夫传统市场 (Souq Waqif) 闲逛与中东晚餐", mode: "🚶 步行", link: "https://maps.google.com/?q=Souq+Waqif" }
-            ]},
-            { day: "Day 2", date: "04/10", location: "🇶🇦 多哈 ➔ 🇩🇰 哥本哈根", desc: "抵达童话王国", events: [
-                { time: "08:00", dur: "6h", action: "搭乘 QR159 航班飞往哥本哈根", mode: "✈️ 航班", link: "https://maps.google.com/?q=Copenhagen+Airport" },
-                { time: "14:30", dur: "1h", action: "抵达酒店办理入住，稍作休息", mode: "🚇 地铁", link: "https://maps.google.com/?q=Copenhagen" },
-                { time: "16:00", dur: "2h", action: "漫步 新港 (Nyhavn) 看彩色房子，走走 Strøget 购物街", mode: "🚶 步行", link: "https://maps.google.com/?q=Nyhavn" }
-            ]},
-            { day: "Day 3", date: "05/10", location: "🇩🇰 哥本哈根", desc: "丹麦皇室与游乐园", events: [
-                { time: "10:00", dur: "2h", action: "阿马林堡宫 (Amalienborg) 观看皇家卫队换岗", mode: "🚶 步行", link: "https://maps.google.com/?q=Amalienborg" },
-                { time: "12:30", dur: "1.5h", action: "Torvehallerne 美食广场享用开放式三明治午餐", mode: "🚶 步行", link: "https://maps.google.com/?q=TorvehallerneKBH" },
-                { time: "15:00", dur: "3h", action: "趣伏里公园 (Tivoli Gardens) 游玩世界最古老游乐园", mode: "🚶 步行", link: "https://maps.google.com/?q=Tivoli+Gardens" }
-            ]},
-            { day: "Day 4", date: "06/10", location: "🇩🇰 哥本哈根 ➔ 🇸🇪 斯德哥尔摩", desc: "跨海列车与瑞典初探", events: [
-                { time: "09:00", dur: "5.5h", action: "搭乘 X2000 高速列车，经厄勒海峡大桥前往斯德哥尔摩", mode: "🚆 跨国列车", link: "https://maps.google.com/?q=Stockholm+Central+Station" },
-                { time: "14:30", dur: "1h", action: "抵达斯德哥尔摩中央车站，前往酒店入住", mode: "🚶 步行", link: "https://maps.google.com/?q=Stockholm" },
-                { time: "16:00", dur: "2.5h", action: "漫步 老城 (Gamla Stan)，穿梭中世纪石板巷弄", mode: "🚶 步行", link: "https://maps.google.com/?q=Gamla+Stan" }
-            ]},
-            { day: "Day 5", date: "07/10", location: "🇸🇪 斯德哥尔摩", desc: "沉船奇观与瑞典肉丸", events: [
-                { time: "10:00", dur: "2.5h", action: "参观 瓦萨沉船博物馆 (Vasa Museum)，看17世纪巨舰", mode: "⛴️ 渡轮", link: "https://maps.google.com/?q=Vasa+Museum" },
-                { time: "13:00", dur: "1.5h", action: "午餐品尝正宗瑞典肉丸 (Köttbullar)", mode: "🚶 步行", link: "https://maps.google.com/?q=Meatballs+for+the+People" },
-                { time: "15:00", dur: "2h", action: "斯德哥尔摩王宫 (The Royal Palace) 与周边建筑", mode: "🚶 步行", link: "https://maps.google.com/?q=The+Royal+Palace+Stockholm" }
-            ]},
-            { day: "Day 6", date: "08/10", location: "🇸🇪 斯德哥尔摩 ➔ 🇳🇴 卑尔根", desc: "飞往峡湾门户 (挪威第1天)", events: [
-                { time: "11:00", dur: "1.5h", action: "搭乘航班飞往挪威西海岸卑尔根", mode: "✈️ 航班", link: "https://maps.google.com/?q=Bergen+Airport" },
-                { time: "14:00", dur: "1.5h", action: "抵达卑尔根，探访世界遗产 布吕根 (Bryggen) 彩色木屋", mode: "🚌 机场巴士", link: "https://maps.google.com/?q=Bryggen" },
-                { time: "16:30", dur: "2h", action: "搭乘 弗洛伊恩山 (Fløyen) 缆车，俯瞰卑尔根日落全景", mode: "🚠 缆车", link: "https://maps.google.com/?q=Floibanen" }
-            ]},
-            { day: "Day 7", date: "09/10", location: "🇳🇴 卑尔根自驾 ➔ 峡湾", desc: "租车开启最美自驾 (挪威第2天)", events: [
-                { time: "09:00", dur: "1h", action: "市中心取车，开始峡湾公路自驾之旅", mode: "🚗 自驾", link: "https://maps.google.com/?q=Bergen+Car+Rental" },
-                { time: "10:30", dur: "2h", action: "驾车前往 Voss，欣赏沿途溪流与 Tvindefossen 瀑布", mode: "🚗 自驾", link: "https://maps.google.com/?q=Tvindefossen" },
-                { time: "13:30", dur: "2h", action: "抵达 Gudvangen，体验 纳柔依峡湾 (Nærøyfjord) 游船", mode: "⛴️ 游船", link: "https://maps.google.com/?q=Gudvangen" },
-                { time: "16:00", dur: "1h", action: "抵达小镇弗洛姆 (Flåm)，入住峡湾酒店", mode: "🚗 自驾", link: "https://maps.google.com/?q=Flam" }
-            ]},
-            { day: "Day 8", date: "10/10", location: "🇳🇴 峡湾自驾", desc: "高山观景台与绝美雪路 (挪威第3天)", events: [
-                { time: "10:00", dur: "1h", action: "驾车盘山而上至 Stegastein 观景台，俯瞰艾于兰峡湾", mode: "🚗 自驾", link: "https://maps.google.com/?q=Stegastein+Viewpoint" },
-                { time: "13:00", dur: "3h", action: "穿越世界最长隧道 Lærdal Tunnel，或走雪峰公路", mode: "🚗 自驾", link: "https://maps.google.com/?q=Laerdal+Tunnel" },
-                { time: "16:00", dur: "2h", action: "抵达哈当厄尔峡湾 (Hardangerfjord) 区域，欣赏果园风景", mode: "🚗 自驾", link: "https://maps.google.com/?q=Hardangerfjord" }
-            ]},
-            { day: "Day 9", date: "11/10", location: "🇳🇴 峡湾 ➔ 卑尔根", desc: "大瀑布与返程 (挪威第4天)", events: [
-                { time: "10:00", dur: "1.5h", action: "游览壮丽的 Vøringfossen 大瀑布，感受自然震撼", mode: "🚗 自驾", link: "https://maps.google.com/?q=Voringsfossen" },
-                { time: "13:00", dur: "3h", action: "沿哈当厄尔国家旅游路线慢驾返回卑尔根", mode: "🚗 自驾", link: "https://maps.google.com/?q=Bergen" },
-                { time: "16:30", dur: "1h", action: "市区还车，结束峡湾精华自驾", mode: "🚗 还车", link: "https://maps.google.com/?q=Bergen" }
-            ]},
-            { day: "Day 10", date: "12/10", location: "🇳🇴 卑尔根 ➔ 奥斯陆", desc: "世界最美铁道 (挪威第5天)", events: [
-                { time: "08:00", dur: "7h", action: "搭乘 卑尔根铁路 (Bergensbanen) 前往奥斯陆，沿途穿越高原与冰川湖", mode: "🚆 景观列车", link: "https://maps.google.com/?q=Oslo+Central+Station" },
-                { time: "15:30", dur: "1h", action: "抵达首都奥斯陆，前往酒店", mode: "🚶 步行", link: "https://maps.google.com/?q=Oslo" },
-                { time: "17:00", dur: "2h", action: "奥斯陆歌剧院 (Oslo Opera House) 屋顶漫步看海港日落", mode: "🚶 步行", link: "https://maps.google.com/?q=Oslo+Opera+House" }
-            ]},
-            { day: "Day 11", date: "13/10", location: "🇳🇴 奥斯陆", desc: "艺术公园与首都风情 (挪威第6天)", events: [
-                { time: "10:00", dur: "2h", action: "维格兰雕塑公园 (Vigeland Park) 欣赏人生百态雕塑", mode: "🚌 电车", link: "https://maps.google.com/?q=Vigeland+Park" },
-                { time: "13:30", dur: "2h", action: "孟克美术馆 (Munch Museum) 欣赏名画《呐喊》", mode: "🚶 步行", link: "https://maps.google.com/?q=Munch+Museum" },
-                { time: "16:00", dur: "2h", action: "阿克尔码头商圈享用海鲜晚餐，结束挪威完美6日", mode: "🚶 步行", link: "https://maps.google.com/?q=Aker+Brygge" }
-            ]},
-            { day: "Day 12", date: "14/10", location: "🇳🇴 奥斯陆 ➔ 🇫🇮 赫尔辛基", desc: "飞往千湖之国", events: [
-                { time: "10:30", dur: "1.5h", action: "搭乘航班飞往芬兰首都赫尔辛基", mode: "✈️ 航班", link: "https://maps.google.com/?q=Helsinki+Airport" },
-                { time: "14:00", dur: "1h", action: "抵达赫尔辛基酒店，办理入住", mode: "🚇 机场快线", link: "https://maps.google.com/?q=Helsinki" },
-                { time: "16:00", dur: "2h", action: "参议院广场与赫尔辛基大教堂 (白教堂)", mode: "🚶 步行", link: "https://maps.google.com/?q=Helsinki+Cathedral" }
-            ]},
-            { day: "Day 13", date: "15/10", location: "🇫🇮 赫尔辛基", desc: "海滨要塞与正宗桑拿", events: [
-                { time: "10:00", dur: "3h", action: "乘渡轮前往 芬兰堡 (Suomenlinna) 海上要塞散步", mode: "⛴️ 渡轮", link: "https://maps.google.com/?q=Suomenlinna" },
-                { time: "14:30", dur: "1.5h", action: "老农贸市场 (Old Market Hall) 品尝本地鲑鱼汤与麋鹿肉", mode: "🚶 步行", link: "https://maps.google.com/?q=Old+Market+Hall+Helsinki" },
-                { time: "17:00", dur: "2.5h", action: "Löyly Helsinki 体验正宗芬兰热桑拿与波罗的海冬泳跳水", mode: "🚶 步行", link: "https://maps.google.com/?q=Loyly+Helsinki" }
-            ]},
-            { day: "Day 14", date: "16/10", location: "🇫🇮 赫尔辛基", desc: "设计街区与静谧教堂", events: [
-                { time: "10:30", dur: "2h", action: "静默教堂 (Kamppi Chapel) 与 岩石教堂 (Temppeliaukion)", mode: "🚶 步行", link: "https://maps.google.com/?q=Temppeliaukion+Church" },
-                { time: "14:00", dur: "2h", action: "赫尔辛基设计区 (Design District) 逛街采购木作伴手礼", mode: "🚶 步行", link: "https://maps.google.com/?q=Design+District+Helsinki" },
-                { time: "16:30", dur: "1h", action: "Cafe Regatta 湖畔红色木屋享用肉桂卷与咖啡", mode: "🚌 公交", link: "https://maps.google.com/?q=Cafe+Regatta" }
-            ]},
-            { day: "Day 15", date: "17/10", location: "🇫🇮 赫尔辛基 ➔ 🇩🇰 哥本哈根", desc: "重返丹麦", events: [
-                { time: "11:00", dur: "1.5h", action: "搭乘航班返回哥本哈根", mode: "✈️ 航班", link: "https://maps.google.com/?q=Copenhagen+Airport" },
-                { time: "14:00", dur: "1h", action: "抵达并办理最后两晚酒店入住", mode: "🚇 地铁", link: "https://maps.google.com/?q=Copenhagen" },
-                { time: "16:00", dur: "2h", action: "罗森堡城堡花园 (Kongens Have) 休闲散步", mode: "🚶 步行", link: "https://maps.google.com/?q=Rosenborg+Castle" }
-            ]},
-            { day: "Day 16", date: "18/10", location: "🇩🇰 哥本哈根", desc: "北欧慢活与采购", events: [
-                { time: "10:00", dur: "3h", action: "圆塔 (The Round Tower) 登顶看风景，市中心最后采买", mode: "🚶 步行", link: "https://maps.google.com/?q=The+Round+Tower" },
-                { time: "14:00", dur: "2h", action: "悠闲漫步于当地咖啡馆，享受 Fika 时光", mode: "☕ 休闲", link: "https://maps.google.com/?q=Copenhagen" },
-                { time: "18:00", dur: "2h", action: "享用告别晚餐：哥本哈根评价极高的 HØST 概念料理", mode: "🚶 步行", link: "https://maps.google.com/?q=Host+Copenhagen" }
-            ]},
-            { day: "Day 17", date: "19/10", location: "🇩🇰 哥本哈根 ➔ 🇸🇬 新加坡", desc: "满载回忆，平安返家", events: [
-                { time: "09:00", dur: "1h", action: "前往哥本哈根机场，办理退税与登机", mode: "🚇 地铁", link: "https://maps.google.com/?q=Copenhagen+Airport" },
-                { time: "12:20", dur: "12h", action: "搭乘 SQ35 直飞新加坡，结束完美的北欧四国之旅！", mode: "✈️ 航班", link: "https://maps.google.com/?q=Changi+Airport" }
-            ]}
-        ];
-
-        const timelineContainer = document.getElementById('timeline-container');
-        const dayNavContainer = document.getElementById('day-nav-container');
-
-        itineraryData.forEach((day, index) => {
-            const dayId = `itinerary-day-${index + 1}`;
-
-            const navBtn = document.createElement('a');
-            navBtn.href = `#${dayId}`;
-            navBtn.className = "block px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-sky-50 hover:text-sky-700 transition-colors";
-            navBtn.innerText = `${day.day} - ${day.location.split('➔')[0].trim()}`;
-            dayNavContainer.appendChild(navBtn);
-
-            let eventsHtml = day.events.map(evt => `
-                <div class="timeline-container pb-6">
-                    <div class="flex flex-wrap items-center gap-3 mb-1">
-                        <span class="font-bold text-sky-600">${evt.time}</span>
-                        <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-md flex items-center gap-1">⏱️ 约 ${evt.dur}</span>
-                        <span class="text-xs bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-md border border-emerald-100">${evt.mode}</span>
-                    </div>
-                    <div class="text-gray-700 font-medium text-[15px] mb-2">${evt.action}</div>
-                    <a href="${evt.link}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-sm text-blue-500 hover:text-blue-700 underline underline-offset-2">
-                        <span>🔗</span> Google Maps 导航
-                    </a>
-                </div>
-            `).join('');
-
-            const dayHtml = `
-                <div id="${dayId}" class="scroll-mt-24 pt-4 border-t border-gray-100 first:border-0 first:pt-0">
-                    <div class="mb-6">
-                        <div class="flex items-end gap-3 mb-1">
-                            <h3 class="text-2xl font-bold text-gray-800">${day.day}</h3>
-                            <span class="text-gray-500 mb-1">${day.date}</span>
-                        </div>
-                        <h4 class="text-lg font-bold text-sky-700">${day.location}</h4>
-                        <p class="text-sm text-gray-500 mt-1">☀️ ${day.desc}</p>
-                    </div>
-                    <div>${eventsHtml}</div>
-                </div>
-            `;
-            timelineContainer.insertAdjacentHTML('beforeend', dayHtml);
-        });
-
-        // 平滑滚动补偿
-        document.querySelectorAll('a[href^="#itinerary-day-"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-
-
-        // --- 4. 美食地图数据与筛选逻辑 ---
-        const foodData = [
-            { name: "HØST", city: "哥本哈根", type: "北欧料理", desc: "高性价比现代北欧新陆料理，连续荣获设计大奖，环境极佳。建议提前预订。", map: "https://maps.google.com/?q=Host+Copenhagen" },
-            { name: "Meatballs for the People", city: "斯德哥尔摩", type: "北欧料理", desc: "全斯德哥尔摩最正宗的手工瑞典肉丸，有传统猪牛混肉，也有驯鹿肉可尝鲜。", map: "https://maps.google.com/?q=Meatballs+for+the+People" },
-            { name: "Bryggeloftet & Stuene", city: "卑尔根", type: "海鲜", desc: "位于布吕根码头的百年老店，视野极佳。主打新鲜峡湾海鲜与传统鱼汤。", map: "https://maps.google.com/?q=Bryggeloftet+Bergen" },
-            { name: "Fiskeriet Youngstorget", city: "奥斯陆", type: "海鲜", desc: "结合鱼市场与餐厅，提供奥斯陆极受欢迎的炸鱼薯条与鲜甜生蚝。", map: "https://maps.google.com/?q=Fiskeriet+Youngstorget" },
-            { name: "Löyly", city: "赫尔辛基", type: "海鲜", desc: "不仅是全城最潮的海滨桑拿，餐厅的『奶油三文鱼汤』更是鲜甜浓郁，绝对必吃。", map: "https://maps.google.com/?q=Loyly+Helsinki" },
-            { name: "Torvehallerne", city: "哥本哈根", type: "小吃/快餐", desc: "市中心最大的美食市集！里面必吃传统的 Smørrebrød (开放式三明治) 与咖啡。", map: "https://maps.google.com/?q=TorvehallerneKBH" },
-            { name: "Cafe Regatta", city: "赫尔辛基", type: "小吃/快餐", desc: "海边的一抹鲜红！全城最出名的传统肉桂卷 (Korvapuusti) 与热巧克力。", map: "https://maps.google.com/?q=Cafe+Regatta" },
-        ];
-
-        const foodGrid = document.getElementById('food-grid');
-        const filterBtns = document.querySelectorAll('.filter-btn');
-
-        function renderFood(filterType) {
-            foodGrid.innerHTML = '';
-            const filtered = filterType === 'all' ? foodData : foodData.filter(item => item.type === filterType);
-
-            filtered.forEach(food => {
-                const card = `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover-card flex flex-col">
-                        <div class="p-5 flex-grow">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <h3 class="font-bold text-gray-800 text-lg">${food.name}</h3>
-                                    <p class="text-xs text-gray-500 mt-1">📍 ${food.city}</p>
-                                </div>
-                                <span class="bg-sky-50 text-sky-700 text-xs px-2 py-1 rounded border border-sky-100">${food.type}</span>
-                            </div>
-                            <p class="text-sm text-gray-600 mb-4">${food.desc}</p>
-                        </div>
-                        <div class="bg-gray-50 border-t border-gray-100 p-4">
-                            <a href="${food.map}" target="_blank" rel="noopener noreferrer" class="flex justify-center items-center gap-2 w-full bg-white border border-gray-200 text-gray-700 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
-                                <span>🗺️</span> 在 Google Maps 中查看
-                            </a>
-                        </div>
-                    </div>
-                `;
-                foodGrid.insertAdjacentHTML('beforeend', card);
-            });
-        }
-
-        renderFood('all');
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                filterBtns.forEach(b => {
-                    b.classList.remove('bg-sky-600', 'text-white');
-                    b.classList.add('bg-gray-100', 'text-gray-600');
-                });
-                e.target.classList.remove('bg-gray-100', 'text-gray-600');
-                e.target.classList.add('bg-sky-600', 'text-white');
-
-                renderFood(e.target.dataset.filter);
-            });
-        });
-
-    </script>
+            <span class="text-xs bg-sky-50 text-sky-700 border border-sky-100 px-2 py-1 rounded ml-2">${fd.type}</span>
+          </div>
+          <p class="text-sm text-gray-600 leading-relaxed">${fd.desc}</p>
+        </div>
+        <div class="bg-gray-50 border-t border-gray-100 p-4">
+          <a href="${fd.map}" target="_blank" class="flex justify-center gap-2 text-sm text-gray-600 hover:text-sky-600">🗺️ Google Maps 查看</a>
+        </div>
+      </div>
+    `);
+  });
+}
+renderFood('all');
+fBtns.forEach(b => b.addEventListener('click', () => {
+  fBtns.forEach(x => { x.classList.remove('bg-sky-600','text-white'); x.classList.add('bg-gray-100','text-gray-600'); });
+  b.classList.add('bg-sky-600','text-white'); b.classList.remove('bg-gray-100','text-gray-600');
+  renderFood(b.dataset.filter);
+}));
+</script>
 </body>
 </html>
