@@ -1,588 +1,637 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>北欧四国+多哈 | 17天终极极光自驾版 v2</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<title>北欧极光之旅 - 2026年修订版</title>
 <style>
-  body { font-family: 'Noto Sans SC', sans-serif; background-color: #f8fafc; color: #0f172a; }
-  .tab-content { display: none; opacity: 0; transition: opacity 0.3s ease; }
-  .tab-content.active { display: block; opacity: 1; }
-  .nav-btn { position: relative; transition: color 0.2s; padding-bottom: 0.5rem; }
-  .nav-btn::after { content: ''; position: absolute; width: 0; height: 3px; bottom: 0; left: 50%; background: #0284c7; transition: all 0.3s ease; transform: translateX(-50%); border-radius: 3px 3px 0 0; }
-  .nav-btn.active::after { width: 100%; }
-  .nav-btn.active { color: #0284c7; font-weight: 700; }
-  .hcard { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-  .hcard:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
-  .tl-line { border-left: 2px dashed #cbd5e1; position: relative; padding-left: 1.5rem; margin-left: 0.5rem; }
-  .tl-line::before { content: '📍'; position: absolute; left: -0.65rem; top: -0.2rem; font-size: 0.8rem; background: #f8fafc; padding: 0.2rem 0; }
-  .noscroll::-webkit-scrollbar { display: none; }
-  .noscroll { -ms-overflow-style: none; scrollbar-width: none; }
-  .badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-  .hero-gradient { background: linear-gradient(135deg, #020617 0%, #1e3a8a 40%, #065f46 70%, #047857 100%); }
-  .section-title { position: relative; padding-bottom: 0.5rem; margin-bottom: 2rem; display: inline-block; }
-  .section-title::after { content: ''; position: absolute; bottom: 0; left: 0; width: 40px; height: 4px; background-color: #0284c7; border-radius: 2px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #0a1128; color: #e8eefc; min-height: 100vh; padding-bottom: 40px; }
+.bar { height: 5px; background: linear-gradient(90deg,#06d6a0,#4cc9f0,#7b2ff7,#06d6a0); background-size: 300%; animation: flow 8s linear infinite; }
+@keyframes flow { to { background-position: 300% 0; } }
+header { text-align: center; padding: 28px 16px 10px; }
+h1 { font-size: 1.8rem; font-weight: 800; }
+.sub { font-size: 1rem; color: #4cc9f0; margin-top: 4px; }
+.dates { color: #9aa8cf; margin-top: 8px; }
+
+.lang-toggle { display: flex; justify-content: center; margin: 16px auto; border: 1px solid #25325c; border-radius: 30px; width: fit-content; }
+.lang-toggle button { padding: 8px 26px; border: none; background: transparent; color: #9aa8cf; cursor: pointer; font-weight: 600; border-radius: 30px; }
+.lang-toggle button.active { background: #4cc9f0; color: #0a1128; }
+
+.tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 800px; margin: 0 auto 24px; padding: 0 12px; }
+.tabs button { background: #131c3d; color: #9aa8cf; border: 1px solid #25325c; padding: 10px 22px; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: .85rem; }
+.tabs button.active { background: linear-gradient(135deg,#7b2ff7,#4cc9f0); color: #fff; border-color: transparent; }
+
+.tab-content { display: none; max-width: 1140px; margin: 0 auto; padding: 0 16px; }
+.tab-content.active { display: block; }
+
+.section-title { font-size: 1.2rem; font-weight: 700; margin: 28px 0 16px; display: flex; align-items: center; gap: 10px; }
+.section-title::before { content: ''; width: 5px; height: 22px; background: linear-gradient(#4cc9f0,#7b2ff7); border-radius: 3px; }
+
+.card { background: #131c3d; border: 1px solid #25325c; border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }
+
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 28px; }
+.stat { background: #131c3d; border: 1px solid #25325c; border-radius: 14px; padding: 18px 10px; text-align: center; }
+.stat .num { font-size: 1.6rem; font-weight: 800; color: #ffd166; }
+.stat .lbl { font-size: .78rem; color: #9aa8cf; margin-top: 4px; }
+
+.day-card { background: #131c3d; border: 1px solid #25325c; border-radius: 14px; margin-bottom: 12px; cursor: pointer; overflow: hidden; }
+.day-card:hover { border-color: #4cc9f0; }
+.day-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; }
+.day-badge { flex-shrink: 0; width: 54px; height: 54px; border-radius: 12px; background: linear-gradient(135deg,#7b2ff7,#4cc9f0); display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; }
+.day-badge .d { font-size: 1.1rem; }
+.day-badge .dt { font-size: .6rem; opacity: .8; }
+.day-route { flex: 1; }
+.day-route .city { font-weight: 700; font-size: 1rem; }
+.day-route .act { font-size: .82rem; color: #9aa8cf; }
+.day-meta { display: flex; gap: 6px; flex-shrink: 0; align-items: center; }
+.day-meta .pill { font-size: .68rem; padding: 2px 10px; border-radius: 20px; background: #1a2547; border: 1px solid #25325c; }
+.day-meta .pill.aurora-pill { background: linear-gradient(90deg,#06d6a0,#4cc9f0); color: #0a1128; font-weight: 700; }
+.day-meta .pill.budget { color: #ffd166; }
+.toggle-ico { transition: .2s; font-size: 1.2rem; }
+
+.day-body { display: none; padding: 0 18px 18px; border-top: 1px solid #25325c; cursor: auto; }
+.day-card.open .day-body { display: block; }
+.day-card.open .toggle-ico { transform: rotate(180deg); }
+
+.wp-table { width: 100%; border-collapse: collapse; font-size: .82rem; margin-top: 10px; }
+.wp-table th { text-align: left; padding: 8px 10px; background: #1a2547; color: #4cc9f0; font-size: .72rem; border-bottom: 1px solid #25325c; }
+.wp-table td { padding: 8px 10px; border-bottom: 1px solid #25325c; }
+.wp-table .time-col { white-space: nowrap; font-weight: 600; color: #ffd166; }
+
+.info-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid #25325c; }
+.info-block { flex: 1; min-width: 150px; }
+.info-block .k { font-size: .7rem; color: #4cc9f0; text-transform: uppercase; }
+.info-block .v { font-size: .85rem; }
+
+.day-tips { margin-top: 12px; background: rgba(255,209,102,.06); border: 1px solid rgba(255,209,102,.15); border-radius: 10px; padding: 10px 14px; }
+.day-tips .k { color: #ffd166; font-weight: 700; font-size: .78rem; margin-bottom: 4px; }
+.day-tips ul { margin-left: 16px; font-size: .8rem; line-height: 1.7; }
+
+.modal-table, .budget-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.modal-table th, .budget-table th { text-align: left; padding: 8px 10px; background: #1a2547; color: #4cc9f0; font-size: .72rem; border-bottom: 1px solid #25325c; }
+.modal-table td, .budget-table td { padding: 8px 10px; border-bottom: 1px solid #25325c; }
+.modal-table .day-col { font-weight: 700; color: #ffd166; }
+
+.hotel-card { background: #1a2547; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+.hotel-card .name { font-weight: 700; }
+.hotel-card .detail { color: #9aa8cf; font-size: .8rem; }
+
+.budget-bar { display: flex; height: 28px; border-radius: 14px; overflow: hidden; margin: 12px 0; }
+.budget-bar .seg { display: flex; align-items: center; justify-content: center; font-size: .65rem; font-weight: 700; color: #0a1128; }
+.budget-bar .seg.trans { background: #4cc9f0; }
+.budget-bar .seg.stay { background: #7b2ff7; }
+.budget-bar .seg.food { background: #ffd166; }
+.budget-bar .seg.actv { background: #06d6a0; }
+.budget-bar .seg.oth { background: #ef476f; }
+
+.budget-legends { display: flex; flex-wrap: wrap; gap: 14px; font-size: .8rem; }
+.budget-legends .dot { width: 12px; height: 12px; border-radius: 4px; display: inline-block; vertical-align: middle; margin-right: 4px; }
+
+.budget-table .sum-row td { font-weight: 700; border-top: 2px solid #ffd166; color: #ffd166; }
+
+.checklist-item { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; border-bottom: 1px solid #25325c; }
+.checklist-item .cb { width: 18px; height: 18px; accent-color: #4cc9f0; flex-shrink: 0; margin-top: 2px; }
+.checklist-item .txt { font-size: .85rem; line-height: 1.5; }
+.cat-group .cat-title { font-size: 1rem; font-weight: 700; margin: 16px 0 6px; color: #7b2ff7; display: flex; align-items: center; gap: 8px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width:760px){ .stats { grid-template-columns: repeat(2,1fr); } .grid-2 { grid-template-columns: 1fr; } }
+
+footer { text-align: center; color: #9aa8cf; font-size: .75rem; margin-top: 50px; padding: 20px; border-top: 1px solid #25325c; }
+
+/* 双语切换基础 */
+.zh { display: inline; }
+.en { display: none; }
+body.lang-en .zh { display: none; }
+body.lang-en .en { display: inline; }
 </style>
 </head>
-<body class="antialiased">
+<body class="lang-zh">
+<div class="bar"></div>
+<header>
+  <h1><span class="zh">🌌 北欧极光终极之旅</span><span class="en">🌌 Nordic Aurora Ultimate Trip</span></h1>
+  <div class="sub"><span class="zh">新加坡 · 丹麦 · 瑞典 · 挪威 · 18天深度行程</span><span class="en">Singapore · Denmark · Sweden · Norway · 18-day Itinerary</span></div>
+  <div class="dates">📅 2026.10.02 – 10.19</div>
+</header>
 
-<!-- NAV -->
-<nav class="bg-white shadow-md sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 md:px-6">
-    <div class="flex justify-between items-center h-16">
-      <div class="font-black text-xl text-sky-800 flex items-center gap-2">
-        <span>🌌</span><span class="hidden sm:inline">北欧 17天终极客制版</span><span class="sm:hidden">北欧行程</span>
+<div class="lang-toggle">
+  <button id="btn-zh" class="active">中文</button>
+  <button id="btn-en">English</button>
+</div>
+
+<div class="tabs">
+  <button class="active" data-tab="itinerary"><span class="zh">📋 每日行程</span><span class="en">📋 Itinerary</span></button>
+  <button data-tab="transport"><span class="zh">🚗 交通住宿</span><span class="en">🚗 Transport & Hotels</span></button>
+  <button data-tab="budget"><span class="zh">💰 预算分析</span><span class="en">💰 Budget</span></button>
+  <button data-tab="prep"><span class="zh">🎒 行前准备</span><span class="en">🎒 Preparation</span></button>
+</div>
+
+<div class="tab-content active" id="tab-itinerary">
+  <div class="stats" id="stats-panel"></div>
+  <div class="section-title"><span class="zh">🗓️ 每日详细行程（点击展开）</span><span class="en">🗓️ Daily Itinerary (click to expand)</span></div>
+  <div id="itinerary-list"></div>
+</div>
+
+<div class="tab-content" id="tab-transport">
+  <div class="section-title"><span class="zh">🚆 交通方式总览</span><span class="en">🚆 Transport Overview</span></div>
+  <div class="card" id="transport-table-wrap"></div>
+  <div class="section-title"><span class="zh">🏨 住宿总览</span><span class="en">🏨 Hotels Overview</span></div>
+  <div id="hotel-list"></div>
+</div>
+
+<div class="tab-content" id="tab-budget">
+  <div class="section-title"><span class="zh">💰 预算分析</span><span class="en">💰 Budget Analysis</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="zh">📊 预算构成（人均/天）</span><span class="en">📊 Budget Breakdown (per day)</span></h3>
+      <div class="budget-bar">
+        <div class="seg trans" style="width:32%"><span class="zh">交通32%</span><span class="en">Transport32%</span></div>
+        <div class="seg stay" style="width:28%"><span class="zh">住宿28%</span><span class="en">Hotel28%</span></div>
+        <div class="seg food" style="width:22%"><span class="zh">餐饮22%</span><span class="en">Food22%</span></div>
+        <div class="seg actv" style="width:12%"><span class="zh">活动12%</span><span class="en">Activity12%</span></div>
+        <div class="seg oth" style="width:6%"><span class="zh">其他6%</span><span class="en">Other6%</span></div>
       </div>
-      <div class="hidden md:flex space-x-8 mt-2" id="nav-tabs">
-        <button class="nav-btn active text-gray-500 text-sm" data-target="overview">行程总览</button>
-        <button class="nav-btn text-gray-500 text-sm" data-target="transport">交通与住宿详细</button>
-        <button class="nav-btn text-gray-500 text-sm" data-target="daily">每日行程排程</button>
-        <button class="nav-btn text-gray-500 text-sm" data-target="food">美食地图清单</button>
-        <button class="nav-btn text-gray-500 text-sm" data-target="prep">行前准备</button>
+      <div class="budget-legends">
+        <span><span class="dot" style="background:#4cc9f0"></span><span class="zh">交通</span><span class="en">Transport</span></span>
+        <span><span class="dot" style="background:#7b2ff7"></span><span class="zh">住宿</span><span class="en">Hotel</span></span>
+        <span><span class="dot" style="background:#ffd166"></span><span class="zh">餐饮</span><span class="en">Food</span></span>
+        <span><span class="dot" style="background:#06d6a0"></span><span class="zh">活动</span><span class="en">Activity</span></span>
+        <span><span class="dot" style="background:#ef476f"></span><span class="zh">其他</span><span class="en">Other</span></span>
       </div>
-      <button id="mob-btn" class="md:hidden text-2xl text-gray-600 focus:outline-none">≡</button>
+      <p style="color:#9aa8cf;font-size:.78rem;"><span class="zh">* 基于每日预算估算，实际费用可能不同</span><span class="en">* Estimated daily budget, actual may vary</span></p>
+    </div>
+    <div class="card">
+      <h3><span class="zh">📈 每日预算分布</span><span class="en">📈 Daily Budget Breakdown</span></h3>
+      <div id="daily-budget-chart"></div>
     </div>
   </div>
-  <div id="mob-menu" class="hidden md:hidden bg-white border-t px-4 py-3 space-y-2 shadow-xl absolute w-full z-40">
-    <button class="mob-nav block w-full text-left py-2 text-sm text-sky-600 font-bold" data-target="overview">行程总览</button>
-    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600 font-medium" data-target="transport">交通与住宿详细</button>
-    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600 font-medium" data-target="daily">每日行程排程</button>
-    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600 font-medium" data-target="food">美食地图清单</button>
-    <button class="mob-nav block w-full text-left py-2 text-sm text-gray-600 font-medium" data-target="prep">行前准备</button>
+  <div class="card">
+    <h3><span class="zh">📋 逐日预算明细</span><span class="en">📋 Daily Budget Details</span></h3>
+    <table class="budget-table">
+      <thead><tr>
+        <th><span class="zh">天</span><span class="en">Day</span></th>
+        <th><span class="zh">日期</span><span class="en">Date</span></th>
+        <th><span class="zh">路线</span><span class="en">Route</span></th>
+        <th><span class="zh">交通</span><span class="en">Trans</span></th>
+        <th><span class="zh">住宿</span><span class="en">Hotel</span></th>
+        <th><span class="zh">餐饮</span><span class="en">Food</span></th>
+        <th><span class="zh">活动</span><span class="en">Act</span></th>
+        <th><span class="zh">其他</span><span class="en">Other</span></th>
+        <th><span class="zh">合计</span><span class="en">Total</span></th>
+      </tr></thead>
+      <tbody id="budget-tbody"></tbody>
+    </table>
   </div>
-</nav>
+</div>
 
-<main class="max-w-7xl mx-auto px-4 md:px-6 py-8 mb-24">
-
-<!-- ===== 1. OVERVIEW ===== -->
-<section id="overview" class="tab-content active">
-  <div class="hero-gradient rounded-3xl p-8 md:p-14 mb-10 text-white shadow-xl relative overflow-hidden">
-    <div class="absolute top-0 right-0 opacity-10 text-[15rem] leading-none transform translate-x-10 -translate-y-10">🏔️</div>
-    <div class="relative z-10">
-      <div class="inline-block bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-widest uppercase">
-        03 Oct – 19 Oct 2026 · 17 Days · 2 Adults
-      </div>
-      <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight tracking-tight">
-        🇸🇬 → 🇶🇦 → 🇩🇰 → 🇸🇪 → <span class="text-emerald-400">🇳🇴</span> → 🇩🇰
-      </h1>
-      <p class="text-sky-100 text-base md:text-xl max-w-3xl leading-relaxed font-light">
-        <strong class="text-white font-bold">最终完整版 v2：</strong>取消芬兰，极致放大小挪威！长达 11 天的挪威行程完美结合「西海岸峡湾自驾」与「Senja 岛+特罗姆瑟极圈极光环线」。为您精算交通时间与花费，并升级在地美食与特色住宿清单。
-      </p>
-    </div>
+<div class="tab-content" id="tab-prep">
+  <div class="section-title"><span class="zh">🎒 行前准备清单</span><span class="en">🎒 Packing Checklist</span></div>
+  <div class="card">
+    <p style="color:#9aa8cf;font-size:.82rem;margin-bottom:12px;"><span class="zh">✅ 点击复选框标记已完成，数据自动保存在浏览器</span><span class="en">✅ Check items as completed (saved locally)</span></p>
+    <div id="checklist-container"></div>
   </div>
-
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12">
-    <div class="bg-white rounded-2xl p-5 text-center hcard border border-gray-100 shadow-sm">
-      <div class="text-3xl mb-2">🇶🇦</div>
-      <div class="font-bold text-gray-800 text-lg">多哈</div>
-      <div class="text-sky-600 font-black text-xl mb-1">1 天</div>
-      <div class="text-xs text-gray-500 bg-gray-50 rounded-full py-1">中转一日快闪</div>
-    </div>
-    <div class="bg-white rounded-2xl p-5 text-center hcard border border-gray-100 shadow-sm">
-      <div class="text-3xl mb-2">🇩🇰</div>
-      <div class="font-bold text-gray-800 text-lg">丹麦</div>
-      <div class="text-sky-600 font-black text-xl mb-1">3 天</div>
-      <div class="text-xs text-gray-500 bg-gray-50 rounded-full py-1">2天首段 + 1天压轴</div>
-    </div>
-    <div class="bg-white rounded-2xl p-5 text-center hcard border border-gray-100 shadow-sm">
-      <div class="text-3xl mb-2">🇸🇪</div>
-      <div class="font-bold text-gray-800 text-lg">瑞典</div>
-      <div class="text-sky-600 font-black text-xl mb-1">2 天</div>
-      <div class="text-xs text-gray-500 bg-gray-50 rounded-full py-1">斯京老城与文艺</div>
-    </div>
-    <div class="bg-emerald-600 rounded-2xl p-5 text-center hcard border border-emerald-500 shadow-lg relative overflow-hidden">
-      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] opacity-30"></div>
-      <div class="relative z-10">
-        <div class="text-3xl mb-2">🇳🇴</div>
-        <div class="font-bold text-white text-lg">挪威</div>
-        <div class="text-yellow-300 font-black text-xl mb-1">11 天深度</div>
-        <div class="text-xs text-emerald-800 bg-yellow-300 rounded-full py-1 font-bold">自驾+铁路+双极光</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 2. TRANSPORT & HOTELS ===== -->
-<section id="transport" class="tab-content">
-  <h2 class="text-3xl font-black text-gray-800 section-title">✈️ 交通策略与图表分析</h2>
-
-  <!-- Chart Section -->
-  <div class="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 mb-10 hcard">
-    <div class="flex flex-col lg:flex-row gap-8 items-center">
-      <div class="w-full lg:w-1/3">
-        <h3 class="text-xl font-bold text-sky-800 mb-3">关键城际交通抉择</h3>
-        <p class="text-sm text-gray-600 leading-relaxed mb-4">
-          针对挪威境内的长途移动，本行程采用<b>「混搭策略」</b>以达到时间与体验的最佳平衡：<br><br>
-          ✅ <b>卑尔根 → 奥斯陆：</b>舍弃1小时的快机，选择7小时的 Bergensbanen 列车。虽然时间长，但这趟车被誉为世界最美铁路之一，且票价往往比机票加行李还便宜，等于「把交通当成景点」。<br><br>
-          ✅ <b>奥斯陆 → 特罗姆瑟：</b>坚决选择内陆航班直飞。距离超过 1100 公里，搭火车需转乘且耗时超过 24 小时，搭机仅需 2 小时，彻底释放游玩时间。
-        </p>
-      </div>
-      <div class="w-full lg:w-2/3 h-64 relative">
-        <canvas id="transportChart"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <h2 class="text-3xl font-black text-gray-800 section-title">🏨 完整住宿配置与价格指南 (含 Senja)</h2>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-    <!-- Hotel Cards -->
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hcard shadow-sm flex flex-col">
-      <div class="bg-amber-100 text-amber-800 text-xs font-bold px-4 py-2 flex justify-between">
-        <span>🇶🇦 多哈 (1晚)</span><span>约 €120/晚</span>
-      </div>
-      <div class="p-5 flex-1">
-        <h4 class="font-bold text-gray-800 text-lg mb-2">Souq Waqif Boutique Hotels</h4>
-        <div class="flex flex-wrap gap-1 mb-3">
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">📍 瓦其夫市场内</span>
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🏛️ 阿拉伯精品风</span>
-        </div>
-        <p class="text-xs text-gray-500">地理位置极佳，出门即是市场，免去交通烦恼。属于Tivoli集团管理，服务质感优异。</p>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hcard shadow-sm flex flex-col">
-      <div class="bg-red-100 text-red-800 text-xs font-bold px-4 py-2 flex justify-between">
-        <span>🇩🇰 哥本哈根 (3晚)</span><span>约 €110/晚</span>
-      </div>
-      <div class="p-5 flex-1">
-        <h4 class="font-bold text-gray-800 text-lg mb-2">Wakeup Copenhagen – Borgergade</h4>
-        <div class="flex flex-wrap gap-1 mb-3">
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">📍 距新港5分钟</span>
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🛏️ 极简设计风</span>
-        </div>
-        <p class="text-xs text-gray-500">高物价的丹麦首都首选。房间虽小但五脏俱全，由丹麦名建筑师设计，质感出众。</p>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hcard shadow-sm flex flex-col">
-      <div class="bg-blue-100 text-blue-800 text-xs font-bold px-4 py-2 flex justify-between">
-        <span>🇸🇪 斯德哥尔摩 (2晚)</span><span>约 €140/晚</span>
-      </div>
-      <div class="p-5 flex-1">
-        <h4 class="font-bold text-gray-800 text-lg mb-2">Scandic Continental</h4>
-        <div class="flex flex-wrap gap-1 mb-3">
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🚆 车站正对面</span>
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🍳 超丰盛早餐</span>
-        </div>
-        <p class="text-xs text-gray-500">跨国火车下来拖行李50公尺即达。屋顶有很棒的露天酒吧俯瞰斯德哥尔摩市景。</p>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hcard shadow-sm flex flex-col">
-      <div class="bg-emerald-100 text-emerald-800 text-xs font-bold px-4 py-2 flex justify-between">
-        <span>🇳🇴 卑尔根 (2晚)</span><span>约 €150/晚</span>
-      </div>
-      <div class="p-5 flex-1">
-        <h4 class="font-bold text-gray-800 text-lg mb-2">Thon Hotel Orion</h4>
-        <div class="flex flex-wrap gap-1 mb-3">
-          <span class="text-[10px] bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-1 rounded">🍽️ 免费含早+晚餐</span>
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">⚓ 布吕根旁</span>
-        </div>
-        <p class="text-xs text-gray-500">这家饭店最大的卖点是<b>附赠丰盛的自助晚餐</b>！在挪威每人每餐动辄€30+，住这里可以省下极大开销。</p>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hcard shadow-sm flex flex-col">
-      <div class="bg-indigo-100 text-indigo-800 text-xs font-bold px-4 py-2 flex justify-between">
-        <span>🇳🇴 奥斯陆 (2晚)</span><span>约 €90/晚</span>
-      </div>
-      <div class="p-5 flex-1">
-        <h4 class="font-bold text-gray-800 text-lg mb-2">Citybox Oslo</h4>
-        <div class="flex flex-wrap gap-1 mb-3">
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🤖 科技自助入住</span>
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">💰 首都极高CP值</span>
-        </div>
-        <p class="text-xs text-gray-500">现代化的无人旅馆，干净舒适且位置极佳。省下的费用可以直接拿去吃Aker Brygge的海鲜。</p>
-      </div>
-    </div>
-
-    <!-- SENJA HOTELS -->
-    <div class="bg-gradient-to-b from-teal-50 to-white rounded-2xl border border-teal-200 overflow-hidden hcard shadow-md flex flex-col md:col-span-2">
-      <div class="bg-teal-600 text-white text-xs font-bold px-4 py-2 flex justify-between items-center">
-        <span>🇳🇴 塞尼亚岛 Senja (2晚) - 极光秘境特选</span><span class="bg-white text-teal-800 px-2 py-0.5 rounded-full">强烈推荐提早半年预订</span>
-      </div>
-      <div class="p-5 flex-1 flex flex-col md:flex-row gap-4">
-        <div class="flex-1">
-          <h4 class="font-bold text-gray-800 text-lg mb-1">选项A：Hamn i Senja</h4>
-          <p class="text-xs text-teal-700 font-bold mb-2">约 €220/晚</p>
-          <div class="flex flex-wrap gap-1 mb-2">
-            <span class="text-[10px] bg-teal-100 text-teal-800 px-2 py-1 rounded">🌌 无光害阳台极光</span>
-            <span class="text-[10px] bg-teal-100 text-teal-800 px-2 py-1 rounded">🌊 峡湾全景套房</span>
-          </div>
-          <p class="text-xs text-gray-600">西海岸旧渔村改建的顶级度假村，设备完善。甚至提供极光唤醒服务与户外热水浴缸。</p>
-        </div>
-        <div class="w-px bg-gray-200 hidden md:block"></div>
-        <div class="flex-1">
-          <h4 class="font-bold text-gray-800 text-lg mb-1">选项B：Mefjord Brygge</h4>
-          <p class="text-xs text-teal-700 font-bold mb-2">约 €160/晚</p>
-          <div class="flex flex-wrap gap-1 mb-2">
-            <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🐟 传统渔村木屋</span>
-            <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🍳 附带完整厨房</span>
-          </div>
-          <p class="text-xs text-gray-600">更接地气的选择，坐落在锯齿山脉下。附厨房非常适合在超市采购食材自己下厨。</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hcard shadow-sm flex flex-col">
-      <div class="bg-purple-100 text-purple-800 text-xs font-bold px-4 py-2 flex justify-between">
-        <span>🇳🇴 特罗姆瑟 (2晚)</span><span>约 €180/晚</span>
-      </div>
-      <div class="p-5 flex-1">
-        <h4 class="font-bold text-gray-800 text-lg mb-2">Clarion Hotel The Edge</h4>
-        <div class="flex flex-wrap gap-1 mb-3">
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🌊 港口无敌海景</span>
-          <span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-1 rounded">🍹 知名空中酒吧</span>
-        </div>
-        <p class="text-xs text-gray-500">特罗姆瑟最好的饭店之一。许多极光团接驳点都在门口，非常方便。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 3. DAILY ITINERARY ===== -->
-<section id="daily" class="tab-content">
-  <h2 class="text-3xl font-black text-gray-800 section-title mb-8">🗓️ 17日点对点行程排程</h2>
-  <div class="flex flex-col lg:flex-row gap-8">
-    <div class="w-full lg:w-72 flex-shrink-0">
-      <div class="sticky top-24 bg-white rounded-2xl shadow-sm border border-gray-100 p-5 max-h-[75vh] overflow-y-auto noscroll">
-        <h3 class="font-black text-gray-800 mb-4 border-b border-gray-100 pb-3 text-sm tracking-wide">快速跳转</h3>
-        <div id="day-nav" class="space-y-1"></div>
-      </div>
-    </div>
-    <div class="flex-1 bg-white rounded-3xl shadow-sm border border-gray-100 p-6 md:p-10">
-      <div id="timeline" class="space-y-14"></div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== 4. FOOD MAP ===== -->
-<section id="food" class="tab-content">
-  <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
-    <h2 class="text-3xl font-black text-gray-800 section-title mb-0">🍽️ 终极美食地图清单</h2>
-    <div class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-full" id="food-filters">
-      <button class="filter-btn active text-sm px-5 py-2 rounded-full bg-white shadow-sm text-sky-700 font-bold transition-all" data-filter="all">全部城市</button>
-      <button class="filter-btn text-sm px-5 py-2 rounded-full text-gray-600 hover:text-gray-900 transition-all font-medium" data-filter="Copenhagen">丹麦 / 哥本哈根</button>
-      <button class="filter-btn text-sm px-5 py-2 rounded-full text-gray-600 hover:text-gray-900 transition-all font-medium" data-filter="TromsoSenja">挪威 / 极圈与Senja</button>
-      <button class="filter-btn text-sm px-5 py-2 rounded-full text-gray-600 hover:text-gray-900 transition-all font-medium" data-filter="Others">其他城市</button>
-    </div>
-  </div>
-  <div id="food-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-</section>
-
-<!-- ===== 5. PREP ===== -->
-<section id="prep" class="tab-content">
-  <h2 class="text-3xl font-black text-gray-800 section-title mb-8">🎒 行前实用准备与建议</h2>
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hcard">
-      <div class="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center text-2xl mb-4">💳</div>
-      <h3 class="font-bold text-gray-800 text-lg mb-3">无现金社会与网络</h3>
-      <ul class="text-sm text-gray-600 space-y-3 leading-relaxed">
-        <li>• <b>完全无需换汇：</b>北欧四国全面实行无现金（Cashless）。连上公共厕所或买热狗都能刷卡，请准备两张免海外交易手续费的 Visa/Mastercard。</li>
-        <li>• <b>eSIM 推荐：</b>建议提前购买覆盖全欧洲的 eSIM（如 Airalo 或 Holafly），随插即用，自驾导航更稳定。</li>
+  <div class="section-title"><span class="zh">📌 实用信息汇总</span><span class="en">📌 Useful Information</span></div>
+  <div class="grid-2">
+    <div class="card">
+      <h3><span class="zh">🌐 网络与通讯</span><span class="en">🌐 Connectivity</span></h3>
+      <ul style="margin-left:16px;font-size:.82rem;line-height:1.8;">
+        <li><span class="zh">推荐购买欧洲 eSIM (Airalo / Holafly)</span><span class="en">Buy European eSIM (Airalo / Holafly)</span></li>
+        <li><span class="zh">北极圈信号较弱，下载离线地图</span><span class="en">Weak signal in Arctic, download offline maps</span></li>
       </ul>
     </div>
-
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hcard">
-      <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center text-2xl mb-4">🚗</div>
-      <h3 class="font-bold text-gray-800 text-lg mb-3">峡湾与 Senja 岛自驾</h3>
-      <ul class="text-sm text-gray-600 space-y-3 leading-relaxed">
-        <li>• <b>冬季轮胎：</b>10月中旬特罗姆瑟与Senja极易下雪/结冰，取车时务必确认配备有钉子的<b>冬季雪胎 (Studded tires)</b>。</li>
-        <li>• <b>峡湾渡轮：</b>峡湾自驾遇到水路时，直接把车开上滚装渡轮，系统会自动扫描车牌并从租车信用卡扣款（AutoPASS），完全不用人工买票。</li>
+    <div class="card">
+      <h3><span class="zh">⚡ 电源与插头</span><span class="en">⚡ Power & Plugs</span></h3>
+      <ul style="margin-left:16px;font-size:.82rem;line-height:1.8;">
+        <li><span class="zh">北欧 Type F/C (欧标) 230V</span><span class="en">Nordic Type F/C (Euro) 230V</span></li>
+        <li><span class="zh">新加坡 Type G，需转换头</span><span class="en">Singapore Type G, need adapter</span></li>
+        <li><span class="zh">多口充电器 + 充电宝</span><span class="en">Multi-port charger + power bank</span></li>
       </ul>
     </div>
-
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hcard">
-      <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center text-2xl mb-4">🌌</div>
-      <h3 class="font-bold text-gray-800 text-lg mb-3">10月极光观测指南</h3>
-      <ul class="text-sm text-gray-600 space-y-3 leading-relaxed">
-        <li>• <b>黄金时间：</b>晚上 9:00 至凌晨 2:00。只要天气晴朗无云，10月的极光活跃度非常高。</li>
-        <li>• <b>追光神器：</b>手机必备 <b>My Aurora Forecast</b> App。不要只看 KP 值，最重要的是看「云图 (Cloud Cover)」。云在哪，就开车往反方向跑。</li>
-        <li>• <b>相机设定：</b>手机请开启夜间模式，曝光至少 3-10 秒，并倚靠在坚固表面防手震。</li>
+    <div class="card">
+      <h3><span class="zh">💊 健康与安全</span><span class="en">💊 Health & Safety</span></h3>
+      <ul style="margin-left:16px;font-size:.82rem;line-height:1.8;">
+        <li><span class="zh">购买含紧急医疗 + 取消险的旅游保险</span><span class="en">Buy travel insurance with medical & cancellation</span></li>
+        <li><span class="zh">随身带常用药 (感冒/肠胃/晕车)</span><span class="en">Bring common medicines (cold, stomach, motion)</span></li>
+        <li><span class="zh">欧洲急救电话 112</span><span class="en">EU emergency number 112</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3><span class="zh">🧳 行李建议</span><span class="en">🧳 Luggage Tips</span></h3>
+      <ul style="margin-left:16px;font-size:.82rem;line-height:1.8;">
+        <li><span class="zh">28寸行李箱 + 20寸登机箱/背包</span><span class="en">28" suitcase + 20" carry-on/backpack</span></li>
+        <li><span class="zh">洋葱式穿衣：保暖内衣+抓绒+防水外套</span><span class="en">Layer: thermal + fleece + waterproof shell</span></li>
+        <li><span class="zh">防水防滑靴非常重要 (雨雪+峡湾)</span><span class="en">Waterproof boots essential (rain/snow/fjords)</span></li>
       </ul>
     </div>
   </div>
-</section>
+</div>
 
-</main>
+<footer>
+  <span class="zh">🌍 北欧极光之旅 · 2026年修订版 · 极光受天气影响 · 预算为估算值</span>
+  <span class="en">🌍 Nordic Aurora Trip · 2026 Edition · Aurora depends on weather · Budget estimated</span>
+</footer>
 
-<!-- JS LOGIC -->
 <script>
-// ---- TAB LOGIC ----
-const allBtns = document.querySelectorAll('.nav-btn, .mob-nav');
-const sections = document.querySelectorAll('.tab-content');
-const mobMenu = document.getElementById('mob-menu');
-document.getElementById('mob-btn').addEventListener('click', () => mobMenu.classList.toggle('hidden'));
-
-function switchTab(id) {
-  sections.forEach(s => s.classList.remove('active'));
-  allBtns.forEach(b => {
-    b.classList.remove('active', 'text-sky-600', 'font-bold');
-    if (b.classList.contains('nav-btn')) b.classList.add('text-gray-500');
-    else { b.classList.add('text-gray-600', 'font-medium'); b.classList.remove('text-sky-600', 'font-bold'); }
-
-    if (b.dataset.target === id) {
-      b.classList.add('active');
-      b.classList.remove('text-gray-500', 'text-gray-600', 'font-medium');
-      b.classList.add(b.classList.contains('nav-btn') ? 'text-sky-600' : 'text-sky-600');
-      if(!b.classList.contains('nav-btn')) b.classList.add('font-bold');
-    }
-  });
-  setTimeout(() => { document.getElementById(id).classList.add('active'); }, 50);
-  mobMenu.classList.add('hidden');
-}
-allBtns.forEach(b => b.addEventListener('click', () => switchTab(b.dataset.target)));
-
-// ---- CHART.JS LOGIC ----
-const ctx = document.getElementById('transportChart').getContext('2d');
-new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['卑尔根→奥斯陆 (飞机)', '卑尔根→奥斯陆 (景观火车)', '奥斯陆→特罗姆瑟 (飞机)', '特罗姆瑟→哥本哈根 (飞机)'],
-        datasets: [
-            {
-                label: '预计花费 Cost (€)',
-                data: [150, 80, 140, 160],
-                backgroundColor: 'rgba(2, 132, 199, 0.8)', // Sky 600
-                borderRadius: 4,
-                yAxisID: 'y'
-            },
-            {
-                label: '耗时 Time (小时)',
-                data: [3.5, 7, 2, 2.5], // includes airport transfer time
-                backgroundColor: 'rgba(16, 185, 129, 0.8)', // Emerald 500
-                borderRadius: 4,
-                yAxisID: 'y1'
-            }
-        ]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { position: 'bottom', labels: { font: { family: "'Noto Sans SC', sans-serif" } } }
-        },
-        scales: {
-            x: { grid: { display: false }, ticks: { font: { family: "'Noto Sans SC', sans-serif", size: 10 } } },
-            y: {
-                type: 'linear', position: 'left',
-                title: { display: true, text: '欧元 (€)', font: { size: 12 } }
-            },
-            y1: {
-                type: 'linear', position: 'right', grid: { display: false },
-                title: { display: true, text: '小时 (hrs)', font: { size: 12 } },
-                min: 0, max: 10
-            }
-        }
-    }
-});
-
-// ---- ITINERARY LOGIC ----
-const days = [
-  { day:'Day 1', date:'03/10', loc:'🇸🇬 新加坡 → 🇶🇦 多哈', tag:'QA', desc:'出发 & 多哈一日快闪', events:[
-    {t:'02:00',d:'7.5h',a:'搭乘 QR943 航班飞往多哈',m:'✈️ 航班',link:'https://maps.google.com/?q=Hamad+International+Airport'},
-    {t:'10:00',d:'2.5h',a:'参观 伊斯兰艺术博物馆 (MIA)',m:'🚕 计程车',link:'https://maps.google.com/?q=Museum+of+Islamic+Art+Doha'},
-    {t:'16:00',d:'3h',a:'瓦其夫传统市场 (Souq Waqif)',m:'🚶 步行',link:'https://maps.google.com/?q=Souq+Waqif'}
-  ]},
-  { day:'Day 2', date:'04/10', loc:'🇶🇦 多哈 → 🇩🇰 哥本哈根', tag:'DK', desc:'抵达童话王国', events:[
-    {t:'08:00',d:'6h',a:'搭乘 QR159 飞往哥本哈根',m:'✈️ 航班',link:'https://maps.google.com/?q=Copenhagen+Airport'},
-    {t:'14:30',d:'1h',a:'地铁前往市区，入住酒店',m:'🚇 地铁',link:'https://maps.google.com/?q=Wakeup+Copenhagen'},
-    {t:'16:00',d:'3h',a:'新港 (Nyhavn) 彩色码头漫步',m:'🚶 步行',link:'https://maps.google.com/?q=Nyhavn'}
-  ]},
-  { day:'Day 3', date:'05/10', loc:'🇩🇰 哥本哈根', tag:'DK', desc:'在地美食与港区漫游', events:[
-    {t:'10:30',d:'2h',a:'Torvehallerne 美食广场享用道地开放式三明治',m:'🚶 步行',link:'https://maps.google.com/?q=TorvehallerneKBH'},
-    {t:'13:00',d:'1.5h',a:'运河游船，水上欣赏现代建筑',m:'⛴️ 游船',link:'https://maps.google.com/?q=Canal+Tours+Copenhagen'},
-    {t:'15:00',d:'3h',a:'Reffen 全北欧最大露天美食市集 ＋ Nordhavn 北港新区',m:'🚇 地铁',link:'https://maps.google.com/?q=Reffen+Copenhagen'}
-  ]},
-  { day:'Day 4', date:'06/10', loc:'🇩🇰 哥本哈根 → 🇸🇪 斯德哥尔摩', tag:'SE', desc:'跨海列车入瑞典', events:[
-    {t:'09:00',d:'5.5h',a:'搭乘 X2000 高速列车直达斯京',m:'🚆 跨国列车',link:'https://maps.google.com/?q=Stockholm+Central+Station'},
-    {t:'16:00',d:'2.5h',a:'漫步老城 Gamla Stan，石板巷弄与皇宫广场',m:'🚶 步行',link:'https://maps.google.com/?q=Gamla+Stan+Stockholm'}
-  ]},
-  { day:'Day 5', date:'07/10', loc:'🇸🇪 斯德哥尔摩', tag:'SE', desc:'老城与文艺街区', events:[
-    {t:'10:00',d:'2.5h',a:'斯德哥尔摩王宫周边与运河旁散步，绝佳秋色',m:'🚶 步行',link:'https://maps.google.com/?q=The+Royal+Palace+Stockholm'},
-    {t:'13:00',d:'1.5h',a:'午餐：Meatballs for the People 瑞典传统肉丸',m:'🚶 步行',link:'https://maps.google.com/?q=Meatballs+for+the+People'},
-    {t:'15:00',d:'3h',a:'Södermalm 南城文艺街区漫步，独立咖啡馆',m:'🚶 步行',link:'https://maps.google.com/?q=Södermalm+Stockholm'}
-  ]},
-  { day:'Day 6', date:'08/10', loc:'🇸🇪 斯德哥尔摩 → 🇳🇴 卑尔根', tag:'NO', desc:'西海岸峡湾起点', events:[
-    {t:'11:00',d:'1.5h',a:'搭乘航班飞往卑尔根',m:'✈️ 内陆航班',link:'https://maps.google.com/?q=Bergen+Airport'},
-    {t:'14:00',d:'2h',a:'世界遗产布吕根 (Bryggen) 彩色木屋群探访',m:'🚌 机场巴士',link:'https://maps.google.com/?q=Bryggen'},
-    {t:'16:30',d:'1.5h',a:'搭乘 Fløyen 缆车登顶看海港日落全景',m:'🚠 缆车',link:'https://maps.google.com/?q=Floibanen+Bergen'}
-  ]},
-  { day:'Day 7', date:'09/10', loc:'🇳🇴 卑尔根 → 峡湾自驾', tag:'NO', desc:'瀑布与峡湾游船', events:[
-    {t:'09:00',d:'1h',a:'卑尔根市区租车出发',m:'🚗 自驾',link:'https://maps.google.com/?q=Bergen'},
-    {t:'10:30',d:'1.5h',a:'驾车经 Voss，欣赏阶梯式的 Tvindefossen 瀑布',m:'🚗 自驾',link:'https://maps.google.com/?q=Tvindefossen'},
-    {t:'13:00',d:'2h',a:'抵达 Gudvangen，乘船体验狭窄震撼的纳柔依峡湾',m:'⛴️ 游船',link:'https://maps.google.com/?q=Gudvangen'},
-    {t:'16:00',d:'1h',a:'入住弗洛姆 (Flåm) 周边峡湾小镇',m:'🚗 自驾',link:'https://maps.google.com/?q=Flam'}
-  ]},
-  { day:'Day 8', date:'10/10', loc:'🇳🇴 峡湾自驾', tag:'NO', desc:'观景台与果园峡湾', events:[
-    {t:'10:00',d:'1h',a:'盘山公路至 Stegastein 悬空观景台',m:'🚗 自驾',link:'https://maps.google.com/?q=Stegastein+Viewpoint'},
-    {t:'12:00',d:'3h',a:'深入 Hardangerfjord 哈当厄尔果园峡湾区',m:'🚗 自驾',link:'https://maps.google.com/?q=Hardangerfjord'},
-    {t:'16:30',d:'1h',a:'欣赏磅礴的 Vøringfossen 大瀑布',m:'🚶 步行',link:'https://maps.google.com/?q=Voringsfossen'}
-  ]},
-  { day:'Day 9', date:'11/10', loc:'🇳🇴 峡湾 → 卑尔根', tag:'NO', desc:'慢驾回城', events:[
-    {t:'10:00',d:'3h',a:'沿国家旅游路线慢驾回卑尔根，沿途停车拍照',m:'🚗 自驾',link:'https://maps.google.com/?q=Bergen'},
-    {t:'14:00',d:'1h',a:'返回市区还车',m:'🚗 还车',link:'https://maps.google.com/?q=Bergen'},
-    {t:'16:00',d:'2h',a:'卑尔根鱼市场 (Fisketorget) 享用海鲜晚餐',m:'🚶 步行',link:'https://maps.google.com/?q=Fish+Market+Bergen'}
-  ]},
-  { day:'Day 10', date:'12/10', loc:'🇳🇴 卑尔根 → 奥斯陆', tag:'NO', desc:'世界最美景观铁路', events:[
-    {t:'08:00',d:'7h',a:'搭乘 Bergensbanen 景观铁路穿越 Hardangervidda 高原雪景',m:'🚆 景观列车',link:'https://maps.google.com/?q=Oslo+Central+Station'},
-    {t:'16:30',d:'1h',a:'抵达首都奥斯陆，入住酒店',m:'🚶 步行',link:'https://maps.google.com/?q=Oslo'},
-    {t:'17:30',d:'2h',a:'奥斯陆歌剧院斜坡屋顶散步看峡湾日落',m:'🚶 步行',link:'https://maps.google.com/?q=Oslo+Opera+House'}
-  ]},
-  { day:'Day 11', date:'13/10', loc:'🇳🇴 奥斯陆', tag:'NO', desc:'峡湾群岛与文艺街区', events:[
-    {t:'10:00',d:'3h',a:'搭乘公共渡轮于 Hovedøya 岛的森林与修道院遗址自然徒步',m:'⛴️ 公共渡轮',link:'https://maps.google.com/?q=Hovedoya+Island+Oslo'},
-    {t:'14:30',d:'2h',a:'Aker Brygge 码头区享用高尚的海鲜午餐',m:'🚶 步行',link:'https://maps.google.com/?q=Aker+Brygge'},
-    {t:'16:30',d:'2h',a:'漫步 Grünerløkka 文艺街区，体验奥斯陆精品咖啡文化',m:'🚶 步行',link:'https://maps.google.com/?q=Grunerløkka+Oslo'}
-  ]},
-  { day:'Day 12', date:'14/10', loc:'🇳🇴 奥斯陆 → 特罗姆瑟', tag:'NO-ARCTIC', desc:'飞向极光之都 🌌', events:[
-    {t:'09:30',d:'2h',a:'飞往极圈内的特罗姆瑟，机场直接租车',m:'✈️ 航班+租车',link:'https://maps.google.com/?q=Tromso+Airport'},
-    {t:'13:00',d:'2h',a:'驾车前往拥有翡翠海水的 Sommarøy 白沙岛',m:'🚗 自驾',link:'https://maps.google.com/?q=Sommaroy'},
-    {t:'16:00',d:'2h',a:'驾车至 Ersfjordbotn 峡湾边缘的景观餐厅享用晚餐',m:'🚗 自驾',link:'https://maps.google.com/?q=Ersfjordbotn+Brygge'},
-    {t:'21:00',d:'2h',a:'🌌 夜间于无光害的峡湾处开启您的第一晚极光追逐',m:'🌌 极光',link:'https://maps.google.com/?q=Ersfjordbotn'}
-  ]},
-  { day:'Day 13', date:'15/10', loc:'🇳🇴 特罗姆瑟 → 塞尼亚岛 (Senja)', tag:'NO-SENJA', desc:'极光秘境深入 🏔️', events:[
-    {t:'10:00',d:'3h',a:'特罗姆瑟向南驾驶，进入被称为挪威缩影的 Senja 塞尼亚岛',m:'🚗 自驾',link:'https://maps.google.com/?q=Senja'},
-    {t:'14:00',d:'2h',a:'欣赏 Husfjellet 沿途壮丽峡湾风光，入住海港极光度假村',m:'🚗 自驾',link:'https://maps.google.com/?q=Hamn+i+Senja'},
-    {t:'20:00',d:'4h',a:'🌌 在光害为零的小木屋阳台或海港边，等待北极光爆发',m:'🌌 极光',link:'https://maps.google.com/?q=Hamn+i+Senja'}
-  ]},
-  { day:'Day 14', date:'16/10', loc:'🇳🇴 塞尼亚岛 (Senja)', tag:'NO-SENJA', desc:'国家景观公路与锯齿峡湾', events:[
-    {t:'10:00',d:'1h',a:'沿着著名的 Senja 国家旅游公路 (National Tourist Route) 巡航',m:'🚗 自驾',link:'https://maps.google.com/?q=Senja+National+Tourist+Route'},
-    {t:'11:30',d:'2h',a:'抵达 Tungeneset 或 Segla 观景台，欣赏鬼斧神工的锯齿山峰入海',m:'🚶 步行',link:'https://maps.google.com/?q=Segla+Senja'},
-    {t:'15:00',d:'1.5h',a:'在 Ersfjord (Senja区) 金色沙滩漫步',m:'🚗 自驾',link:'https://maps.google.com/?q=Ersfjord+Senja'},
-    {t:'20:00',d:'2h',a:'🌌 若沿海多云，开车往岛屿内陆的森林区寻晴空追极光',m:'🌌 极光',link:'https://maps.google.com/?q=Senja'}
-  ]},
-  { day:'Day 15', date:'17/10', loc:'🇳🇴 塞尼亚岛 → 特罗姆瑟', tag:'NO-ARCTIC', desc:'重返特罗姆瑟全景', events:[
-    {t:'10:00',d:'3h',a:'从 Senja 驱车返回特罗姆瑟市区',m:'🚗 自驾',link:'https://maps.google.com/?q=Tromso'},
-    {t:'14:00',d:'2.5h',a:'搭 Fjellheisen 缆车登顶，俯瞰特罗姆瑟峡湾与城市全景',m:'🚠 缆车',link:'https://maps.google.com/?q=Fjellheisen+Tromso'},
-    {t:'20:00',d:'3h',a:'参观绝美的北极大教堂，进行最后之夜的市区极光漫步',m:'🚶 步行',link:'https://maps.google.com/?q=Arctic+Cathedral+Tromso'}
-  ]},
-  { day:'Day 16', date:'18/10', loc:'🇳🇴 特罗姆瑟 → 🇩🇰 哥本哈根', tag:'DK-END', desc:'重返童话首都', events:[
-    {t:'10:00',d:'1h',a:'特罗姆瑟机场还车，准备离开极圈',m:'🚗 还车',link:'https://maps.google.com/?q=Tromso+Airport'},
-    {t:'12:20',d:'2.5h',a:'搭乘 SAS/Norwegian 直飞航班前往哥本哈根',m:'✈️ 直飞航班',link:'https://maps.google.com/?q=Copenhagen+Airport'},
-    {t:'16:00',d:'2h',a:'市中心 Strøget 商业街采买设计品 (Illums Bolighus) 或伴手礼',m:'🛍️ 购物',link:'https://maps.google.com/?q=Stroget'},
-    {t:'19:30',d:'2h',a:'在知名新北欧设计餐厅 (如 HØST) 享用高级告别晚餐',m:'🍽️ 晚餐',link:'https://maps.google.com/?q=Host+Copenhagen'}
-  ]},
-  { day:'Day 17', date:'19/10', loc:'🇩🇰 哥本哈根 → 🇸🇬 新加坡', tag:'HOME', desc:'满载回忆平安返家', events:[
-    {t:'09:00',d:'1.5h',a:'睡到自然醒，前往机场办理退税',m:'🚇 地铁',link:'https://maps.google.com/?q=Copenhagen+Airport'},
-    {t:'12:20',d:'12h',a:'搭乘 SQ35 直飞新加坡，完美结束极致的北欧极光自驾之旅！',m:'✈️ SQ35',link:'https://maps.google.com/?q=Changi+Airport'}
-  ]}
+// ======================= 数据定义（2026年10月2日出发，共18天，多一天在斯德哥尔摩） =======================
+const itineraryData = [
+  { day:"Day 1", date:"02-Oct", cityCN:"新加坡 → 多哈", cityEN:"Singapore → Doha",
+    waypoints:[
+      { time:"10:40", dur:"7h40m", actCN:"搭乘 QR943 飞往多哈", actEN:"Flight QR943 to Doha", transCN:"✈️ 飞机", transEN:"✈️ Flight", locationCN:"樟宜机场", locationEN:"Changi" },
+      { time:"13:30", dur:"停留", actCN:"转机或入住", actEN:"Transit/Check-in", transCN:"🚕 计程车", transEN:"🚕 Taxi", locationCN:"多哈", locationEN:"Doha" }
+    ],
+    hotelCN:"Souq Waqif Boutique Hotels", hotelEN:"Souq Waqif Boutique Hotels",
+    foodCN:"Parisa Souq Waqif", foodEN:"Parisa Souq Waqif", map:"", budget:50, aurora:false,
+    tipsCN:["航程7.5h","多哈可申请免费中转","卡塔尔里亚尔"], tipsEN:["Flight ~7.5h","Qatar free transit hotel","Qatari Riyal"] },
+  { day:"Day 2", date:"03-Oct", cityCN:"多哈 → 哥本哈根", cityEN:"Doha → Copenhagen",
+    waypoints:[
+      { time:"08:00", dur:"2h", actCN:"伊斯兰艺术博物馆", actEN:"Museum of Islamic Art", transCN:"🚕 计程车", transEN:"🚕 Taxi", locationCN:"多哈", locationEN:"Doha" },
+      { time:"12:00", dur:"1h", actCN:"返回机场", actEN:"Back to airport", transCN:"🚕 计程车", transEN:"🚕 Taxi", locationCN:"机场", locationEN:"Airport" },
+      { time:"15:35", dur:"6h45m", actCN:"QR159 飞哥本哈根", actEN:"QR159 to CPH", transCN:"✈️ 飞机", transEN:"✈️ Flight", locationCN:"多哈→哥本哈根", locationEN:"Doha→CPH" }
+    ],
+    hotelCN:"Wakeup Copenhagen", hotelEN:"Wakeup Copenhagen",
+    foodCN:"Damascus One", foodEN:"Damascus One", map:"", budget:80, aurora:false,
+    tipsCN:["博物馆周五上午闭馆","抵达买Rejsekort交通卡","北欧物价高，超市采购备用"], tipsEN:["Museum closed Fri","Buy Rejsekort","Supermarkets save money"] },
+  { day:"Day 3", date:"04-Oct", cityCN:"哥本哈根", cityEN:"Copenhagen",
+    waypoints:[
+      { time:"10:00", dur:"1.5h", actCN:"新港 Nyhavn 漫步", actEN:"Nyhavn walk", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"新港", locationEN:"Nyhavn" },
+      { time:"11:30", dur:"1h", actCN:"小美人鱼", actEN:"Little Mermaid", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"长堤公园", locationEN:"Langelinie" },
+      { time:"13:00", dur:"2h", actCN:"罗森堡城堡", actEN:"Rosenborg Castle", transCN:"🚲 骑行", transEN:"🚲 Cycle", locationCN:"城堡", locationEN:"Rosenborg" },
+      { time:"15:30", dur:"2h", actCN:"Torvehallerne 市集", actEN:"Torvehallerne market", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"市集", locationEN:"Torvehallerne" }
+    ],
+    hotelCN:"Wakeup Copenhagen", hotelEN:"Wakeup Copenhagen",
+    foodCN:"Fiskebaren", foodEN:"Fiskebaren", map:"", budget:100, aurora:false,
+    tipsCN:["推荐租自行车","新港清晨人少","买联票参观多个博物馆"], tipsEN:["Rent a bike","Nyhavn quiet early","Combo tickets save"] },
+  { day:"Day 4", date:"05-Oct", cityCN:"哥本哈根", cityEN:"Copenhagen",
+    waypoints:[
+      { time:"11:00", dur:"3h", actCN:"Reffen 街头美食", actEN:"Reffen street food", transCN:"🚇 地铁", transEN:"🚇 Metro", locationCN:"Refshaleøen", locationEN:"Refshaleøen" },
+      { time:"14:30", dur:"2.5h", actCN:"Nordhavn 建筑巡礼", actEN:"Nordhavn architecture", transCN:"🚇 地铁", transEN:"🚇 Metro", locationCN:"Nordhavn", locationEN:"Nordhavn" }
+    ],
+    hotelCN:"Wakeup Copenhagen", hotelEN:"Wakeup Copenhagen",
+    foodCN:"Reffen 小吃", foodEN:"Reffen street food", map:"", budget:80, aurora:false,
+    tipsCN:["Reffen 露天市集","适合摄影","可配合哥本哈根卡"], tipsEN:["Reffen open-air","Great photos","Copenhagen Card"] },
+  { day:"Day 5", date:"06-Oct", cityCN:"哥本哈根 → 斯德哥尔摩", cityEN:"Copenhagen → Stockholm",
+    waypoints:[
+      { time:"08:30", dur:"5h", actCN:"X2000 高铁", actEN:"X2000 high-speed", transCN:"🚄 高铁", transEN:"🚄 Train", locationCN:"哥本哈根中央站", locationEN:"Copenhagen Central" },
+      { time:"13:30", dur:"3h", actCN:"老城漫步+午餐", actEN:"Gamla Stan walk & lunch", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"老城", locationEN:"Gamla Stan" }
+    ],
+    hotelCN:"Scandic Continental", hotelEN:"Scandic Continental",
+    foodCN:"Kajsas Fisk", foodEN:"Kajsas Fisk", map:"", budget:150, aurora:false,
+    tipsCN:["提前在SJ官网购票","瑞典克朗","石板路穿舒适鞋"], tipsEN:["Book SJ early","Swedish Krona","Comfort shoes"] },
+  { day:"Day 6", date:"07-Oct", cityCN:"斯德哥尔摩", cityEN:"Stockholm",
+    waypoints:[
+      { time:"10:00", dur:"2.5h", actCN:"瓦萨沉船博物馆", actEN:"Vasa Museum", transCN:"🚇 地铁", transEN:"🚇 Metro", locationCN:"Djurgården", locationEN:"Djurgården" },
+      { time:"13:00", dur:"3h", actCN:"地铁艺术巡礼", actEN:"Subway art tour", transCN:"🚇 地铁", transEN:"🚇 Metro", locationCN:"各站", locationEN:"Stations" }
+    ],
+    hotelCN:"Scandic Continental", hotelEN:"Scandic Continental",
+    foodCN:"Meatballs for the People", foodEN:"Meatballs for the People", map:"", budget:90, aurora:false,
+    tipsCN:["瓦萨建议开门即到","24h交通票","Djurgården也有ABBA"], tipsEN:["Vasa early arrival","24h transit pass","ABBA Museum nearby"] },
+  // 多出来的一天放在斯德哥尔摩（Day7）
+  { day:"Day 7", date:"08-Oct", cityCN:"斯德哥尔摩（加天）", cityEN:"Stockholm (Extra Day)",
+    waypoints:[
+      { time:"09:30", dur:"2.5h", actCN:"Skansen 露天博物馆", actEN:"Skansen Open-Air Museum", transCN:"🚇 地铁", transEN:"🚇 Metro", locationCN:"Djurgården", locationEN:"Djurgården" },
+      { time:"12:30", dur:"1.5h", actCN:"皇后岛宫 (Drottningholm)", actEN:"Drottningholm Palace", transCN:"🚢 渡轮+巴士", transEN:"🚢 Ferry+bus", locationCN:"皇后岛", locationEN:"Drottningholm" },
+      { time:"15:00", dur:"2h", actCN:"自由漫步Södermalm", actEN:"Södermalm walk & coffee", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"南城", locationEN:"Södermalm" }
+    ],
+    hotelCN:"Scandic Continental", hotelEN:"Scandic Continental",
+    foodCN:"Pelikan (瑞典传统)", foodEN:"Pelikan (Swedish traditional)", map:"", budget:95, aurora:false,
+    tipsCN:["Skansen有北欧动物","皇后岛宫是皇家夏宫","Södermalm很有文艺气息"], tipsEN:["Skansen has Nordic animals","Royal summer palace","Södermalm artsy vibe"] },
+  { day:"Day 8", date:"09-Oct", cityCN:"斯德哥尔摩 → 卑尔根", cityEN:"Stockholm → Bergen",
+    waypoints:[
+      { time:"09:00", dur:"2.5h", actCN:"飞往卑尔根", actEN:"Flight to Bergen", transCN:"✈️ 飞机", transEN:"✈️ Flight", locationCN:"阿兰达机场", locationEN:"Arlanda" },
+      { time:"12:00", dur:"2h", actCN:"Bryggen 木屋群", actEN:"Bryggen wharf", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"布吕根", locationEN:"Bryggen" },
+      { time:"15:00", dur:"2h", actCN:"弗洛伊恩山缆车", actEN:"Fløyen funicular", transCN:"🚠 缆车", transEN:"🚠 Cable car", locationCN:"弗洛伊恩山", locationEN:"Fløyen" }
+    ],
+    hotelCN:"Thon Hotel Orion", hotelEN:"Thon Hotel Orion",
+    foodCN:"Bryggeloftet & Stuene", foodEN:"Bryggeloftet & Stuene", map:"", budget:180, aurora:false,
+    tipsCN:["挪威克朗","雨城带防水外套","世界遗产Bryggen"], tipsEN:["NOK","Rain city jacket","UNESCO Bryggen"] },
+  { day:"Day 9", date:"10-Oct", cityCN:"卑尔根 → 西峡湾", cityEN:"Bergen → Fjords",
+    waypoints:[
+      { time:"09:00", dur:"1h", actCN:"取车出发", actEN:"Pick up car", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"卑尔根", locationEN:"Bergen" },
+      { time:"10:30", dur:"1.5h", actCN:"Voss小镇", actEN:"Voss town", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"Voss", locationEN:"Voss" },
+      { time:"14:00", dur:"3h", actCN:"纳柔依峡湾游船", actEN:"Nærøyfjord cruise", transCN:"🚢 游船", transEN:"🚢 Cruise", locationCN:"Flåm", locationEN:"Flåm" }
+    ],
+    hotelCN:"Fretheim Hotel", hotelEN:"Fretheim Hotel",
+    foodCN:"Ægir BrewPub", foodEN:"Ægir BrewPub", map:"", budget:200, aurora:false,
+    tipsCN:["国际驾照","纳柔依世界遗产","加油站稀少"], tipsEN:["IDP required","UNESCO fjord","Few petrol stations"] },
+  { day:"Day 10", date:"11-Oct", cityCN:"西峡湾 (哈当厄尔)", cityEN:"Fjords (Hardanger)",
+    waypoints:[
+      { time:"10:00", dur:"2h", actCN:"Stegastein 观景台", actEN:"Stegastein viewpoint", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"Stegastein", locationEN:"Stegastein" },
+      { time:"13:00", dur:"3h", actCN:"苹果酒之路", actEN:"Cider route", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"哈当厄尔", locationEN:"Hardangerfjord" }
+    ],
+    hotelCN:"Hotel Ullensvang", hotelEN:"Hotel Ullensvang",
+    foodCN:"小镇海鲜/自炊", foodEN:"Local seafood", map:"", budget:160, aurora:false,
+    tipsCN:["观景台悬空650米","苹果酒值得尝","山路弯多不赶夜路"], tipsEN:["650m overlook","Try cider","No night driving"] },
+  { day:"Day 11", date:"12-Oct", cityCN:"西峡湾 → 卑尔根", cityEN:"Fjords → Bergen",
+    waypoints:[
+      { time:"10:00", dur:"1.5h", actCN:"Vøringfossen 瀑布", actEN:"Vøringfossen waterfall", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"Vøringfossen", locationEN:"Vøringfossen" },
+      { time:"12:00", dur:"3h", actCN:"开车返回还车", actEN:"Drive back, return car", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"卑尔根", locationEN:"Bergen" }
+    ],
+    hotelCN:"Thon Hotel Orion", hotelEN:"Thon Hotel Orion",
+    foodCN:"Pingvinen", foodEN:"Pingvinen", map:"", budget:100, aurora:false,
+    tipsCN:["新观景天桥","还车前加满油","驯鹿肉传统菜"], tipsEN:["New skywalk","Refuel before return","Reindeer dish"] },
+  { day:"Day 12", date:"13-Oct", cityCN:"卑尔根 → 奥斯陆", cityEN:"Bergen → Oslo",
+    waypoints:[
+      { time:"08:15", dur:"6h45m", actCN:"Bergensbanen 景观火车", actEN:"Bergensbanen scenic train", transCN:"🚄 火车", transEN:"🚄 Train", locationCN:"卑尔根→奥斯陆", locationEN:"Bergen→Oslo" },
+      { time:"15:00", dur:"2h", actCN:"歌剧院屋顶", actEN:"Opera House roof", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"歌剧院", locationEN:"Opera" }
+    ],
+    hotelCN:"Citybox Oslo", hotelEN:"Citybox Oslo",
+    foodCN:"Fiskeriet Youngstorget", foodEN:"Fiskeriet Youngstorget", map:"", budget:130, aurora:false,
+    tipsCN:["右侧座位看雪山","最美火车之一","屋顶可步行登顶"], tipsEN:["Sit right for views","Scenic train","Roof walkable"] },
+  { day:"Day 13", date:"14-Oct", cityCN:"奥斯陆", cityEN:"Oslo",
+    waypoints:[
+      { time:"10:00", dur:"2.5h", actCN:"蒙克美术馆", actEN:"Munch Museum", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"美术馆", locationEN:"Munch" },
+      { time:"13:00", dur:"2h", actCN:"Aker Brygge 海滨", actEN:"Aker Brygge waterfront", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"Aker Brygge", locationEN:"Aker Brygge" },
+      { time:"15:00", dur:"1h", actCN:"Mathallen 食品市场", actEN:"Mathallen food market", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"Mathallen", locationEN:"Mathallen" }
+    ],
+    hotelCN:"Citybox Oslo", hotelEN:"Citybox Oslo",
+    foodCN:"Mathallen", foodEN:"Mathallen", map:"", budget:80, aurora:false,
+    tipsCN:["新美术馆13层","Aker Brygge日落","Oslo Pass省钱"], tipsEN:["13-floor museum","Sunset at Aker","Oslo Pass saves"] },
+  { day:"Day 14", date:"15-Oct", cityCN:"奥斯陆 → 特罗姆瑟", cityEN:"Oslo → Tromsø",
+    waypoints:[
+      { time:"10:00", dur:"1h50m", actCN:"飞往特罗姆瑟", actEN:"Flight to Tromsø", transCN:"✈️ 飞机", transEN:"✈️ Flight", locationCN:"奥斯陆", locationEN:"Oslo" },
+      { time:"12:00", dur:"1h", actCN:"取车补给", actEN:"Pickup & supplies", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"机场", locationEN:"Airport" },
+      { time:"14:00", dur:"1.5h", actCN:"自驾到 Sommarøy", actEN:"Drive to Sommarøy", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"Sommarøy", locationEN:"Sommarøy" },
+      { time:"21:00", dur:"~3h", actCN:"🌌 极光第一夜！", actEN:"🌌 Aurora Night 1!", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"海边", locationEN:"Shore" }
+    ],
+    hotelCN:"Clarion Hotel The Edge", hotelEN:"Clarion Hotel The Edge",
+    foodCN:"Fiskekompaniet", foodEN:"Fiskekompaniet", map:"", budget:220, aurora:true,
+    tipsCN:["极光第一夜！","远离光污染","使用极光App"], tipsEN:["Aurora Night 1!","Low light pollution","Use Aurora app"] },
+  { day:"Day 15", date:"16-Oct", cityCN:"特罗姆瑟 → Senja", cityEN:"Tromsø → Senja",
+    waypoints:[
+      { time:"10:45", dur:"45min", actCN:"渡轮去 Senja 岛", actEN:"Ferry to Senja", transCN:"⛴️ 渡轮", transEN:"⛴️ Ferry", locationCN:"码头", locationEN:"Ferry terminal" },
+      { time:"12:00", dur:"2h", actCN:"自驾环岛入住", actEN:"Drive & check-in cabin", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"Senja", locationEN:"Senja" },
+      { time:"21:00", dur:"~3h", actCN:"🌌 极光第二夜！", actEN:"🌌 Aurora Night 2!", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"木屋旁", locationEN:"Cabin" }
+    ],
+    hotelCN:"Hamn i Senja", hotelEN:"Hamn i Senja",
+    foodCN:"Senjastua", foodEN:"Senjastua", map:"", budget:280, aurora:true,
+    tipsCN:["极光第二夜！","渡轮需预约","木屋可室内等"], tipsEN:["Aurora Night 2!","Book ferry","Wait indoors"] },
+  { day:"Day 16", date:"17-Oct", cityCN:"Senja 岛", cityEN:"Senja Island",
+    waypoints:[
+      { time:"10:00", dur:"3h", actCN:"恶魔之牙观景", actEN:"Devil's Teeth viewpoint", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"北部", locationEN:"North" },
+      { time:"14:00", dur:"2h", actCN:"Senja Roasters 咖啡", actEN:"Senja Roasters café", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"咖啡馆", locationEN:"Café" },
+      { time:"21:00", dur:"~3h", actCN:"🌌 极光第三夜！", actEN:"🌌 Aurora Night 3!", transCN:"🚶 步行", transEN:"🚶 Walk", locationCN:"户外", locationEN:"Outdoor" }
+    ],
+    hotelCN:"Hamn i Senja", hotelEN:"Hamn i Senja",
+    foodCN:"Senja Roasters", foodEN:"Senja Roasters", map:"", budget:150, aurora:true,
+    tipsCN:["极光第三夜！","注意道路结冰","白天短，午前出行"], tipsEN:["Aurora Night 3!","Icy roads","Short daylight"] },
+  { day:"Day 17", date:"18-Oct", cityCN:"Senja → 特罗姆瑟 → 哥本哈根", cityEN:"Senja → Tromsø → CPH",
+    waypoints:[
+      { time:"10:00", dur:"2.5h", actCN:"开车回特罗姆瑟还车", actEN:"Drive back, return car", transCN:"🚗 自驾", transEN:"🚗 Drive", locationCN:"特罗姆瑟", locationEN:"Tromsø" },
+      { time:"13:00", dur:"2h", actCN:"Fjellheisen 缆车", actEN:"Fjellheisen cable car", transCN:"🚠 缆车", transEN:"🚠 Cable car", locationCN:"Storsteinen山", locationEN:"Mount Storsteinen" },
+      { time:"16:00", dur:"2h", actCN:"飞往哥本哈根", actEN:"Flight to CPH", transCN:"✈️ 飞机", transEN:"✈️ Flight", locationCN:"特罗姆瑟", locationEN:"Tromsø" }
+    ],
+    hotelCN:"Clarion Airport CPH", hotelEN:"Clarion Airport CPH",
+    foodCN:"Raketten 热狗", foodEN:"Raketten hot dog", map:"", budget:200, aurora:false,
+    tipsCN:["缆车俯瞰全景","预留还车时间","住机场酒店"], tipsEN:["Panoramic cable car","Allow time","Airport hotel"] },
+  { day:"Day 18", date:"19-Oct", cityCN:"哥本哈根 → 新加坡", cityEN:"Copenhagen → Singapore",
+    waypoints:[
+      { time:"10:00", dur:"12.5h", actCN:"SQ35 直飞新加坡", actEN:"SQ35 direct to SIN", transCN:"✈️ 飞机", transEN:"✈️ Flight", locationCN:"哥本哈根", locationEN:"CPH" }
+    ],
+    hotelCN:"飞机上", hotelEN:"On plane",
+    foodCN:"机场轻食", foodEN:"Airport café", map:"", budget:50, aurora:false,
+    tipsCN:["提前3小时","离境退税","安全到家！"], tipsEN:["Arrive 3h early","VAT refund","Safe home!"] }
 ];
 
-const tagStyle = {
-  'QA': 'bg-amber-100 text-amber-800 border-amber-200',
-  'DK': 'bg-red-50 text-red-700 border-red-200',
-  'SE': 'bg-blue-50 text-blue-700 border-blue-200',
-  'NO': 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  'NO-ARCTIC': 'bg-purple-100 text-purple-900 border-purple-300',
-  'NO-SENJA': 'bg-teal-100 text-teal-900 border-teal-300 font-black',
-  'DK-END': 'bg-rose-50 text-rose-800 border-rose-200',
-  'HOME': 'bg-gray-100 text-gray-700 border-gray-300'
-};
-const tagLabel = { 'QA':'多哈','DK':'丹麦首段','SE':'瑞典','NO':'西峡湾','NO-ARCTIC':'🌌特罗姆瑟','NO-SENJA':'🏔️Senja','DK-END':'丹麦压轴','HOME':'回程' };
+// 预算明细
+const budgetDetail = itineraryData.map(d => {
+  const t = Math.round(d.budget * 0.32);
+  const h = Math.round(d.budget * 0.28);
+  const f = Math.round(d.budget * 0.22);
+  const a = Math.round(d.budget * 0.12);
+  const o = d.budget - t - h - f - a;
+  return { day:d.day, date:d.date, routeCN:d.cityCN, routeEN:d.cityEN, trans:t, hotel:h, food:f, act:a, other:o, total:d.budget };
+});
 
-const nav = document.getElementById('day-nav');
-const tl = document.getElementById('timeline');
+// 行前准备分类
+const checklistCategories = [
+  { nameCN:"📄 证件与文件", nameEN:"📄 Documents",
+    items:[
+      { id:"doc1", cn:"护照（有效期6个月以上）", en:"Passport 6+ months" },
+      { id:"doc2", cn:"申根签证 / 居留许可", en:"Schengen Visa" },
+      { id:"doc3", cn:"国际驾照 IDP + 本国驾照", en:"IDP + home license" },
+      { id:"doc4", cn:"机票 & 酒店预订确认单", en:"Flight & hotel confirmations" },
+      { id:"doc5", cn:"旅游保险单", en:"Travel insurance" },
+      { id:"doc6", cn:"电子备份（云端/邮件）", en:"Digital backups (cloud/email)" }
+    ]},
+  { nameCN:"💊 健康与药品", nameEN:"💊 Health & Medicine",
+    items:[
+      { id:"med1", cn:"感冒药 / 退烧药", en:"Cold & fever meds" },
+      { id:"med2", cn:"肠胃药", en:"Digestive meds" },
+      { id:"med3", cn:"晕车药", en:"Motion sickness meds" },
+      { id:"med4", cn:"止痛药 / 创可贴", en:"Painkillers / plasters" },
+      { id:"med5", cn:"个人日常用药（连续处方）", en:"Personal daily meds" }
+    ]},
+  { nameCN:"🧥 衣物与装备", nameEN:"🧥 Clothes & Gear",
+    items:[
+      { id:"cloth1", cn:"保暖内层（排汗速干）", en:"Thermal base layer" },
+      { id:"cloth2", cn:"中层（抓绒/羽绒）", en:"Mid layer (fleece/down)" },
+      { id:"cloth3", cn:"防风防水冲锋衣", en:"Waterproof/windproof shell" },
+      { id:"cloth4", cn:"防滑雪地靴/防水靴", en:"Waterproof snow boots" },
+      { id:"cloth5", cn:"保暖帽/手套/围巾", en:"Hat/gloves/scarf" },
+      { id:"cloth6", cn:"暖宝宝（热贴）", en:"Hand warmers" }
+    ]},
+  { nameCN:"📱 科技与配件", nameEN:"📱 Tech & Accessories",
+    items:[
+      { id:"tech1", cn:"欧洲 eSIM/SIM卡", en:"Europe eSIM/SIM" },
+      { id:"tech2", cn:"转换插头 Type F/C", en:"Travel adapter Type F/C" },
+      { id:"tech3", cn:"多口充电器 + 充电宝", en:"Multi-charger + power bank" },
+      { id:"tech4", cn:"相机 + 三脚架（极光）", en:"Camera + tripod (aurora)" },
+      { id:"tech5", cn:"离线地图", en:"Offline maps" },
+      { id:"tech6", cn:"头灯/手电筒（极光夜）", en:"Headlamp/flashlight" }
+    ]}
+];
 
-days.forEach((day, i) => {
-  const id = `day-${i+1}`;
-  const a = document.createElement('a');
-  a.href = `#${id}`;
-  a.className = 'block px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-sky-50 hover:text-sky-700 transition-colors flex items-center gap-3 border border-transparent hover:border-sky-100';
-  a.innerHTML = `<span class="badge border ${tagStyle[day.tag]} w-16 text-center shadow-sm">${tagLabel[day.tag]}</span><span class="truncate font-medium">${day.day}</span>`;
-  a.addEventListener('click', e => { e.preventDefault(); document.getElementById(id).scrollIntoView({behavior:'smooth'}); });
-  nav.appendChild(a);
+// ======================= 渲染函数 =======================
+function renderStats() {
+  const el = document.getElementById('stats-panel');
+  const auroraNights = itineraryData.filter(d => d.aurora).length;
+  const totalBudget = itineraryData.reduce((a,d) => a+d.budget, 0);
+  el.innerHTML = `
+    <div class="stat"><div class="num">18</div><div class="lbl"><span class="zh">总天数</span><span class="en">Days</span></div></div>
+    <div class="stat"><div class="num">${auroraNights}</div><div class="lbl"><span class="zh">极光夜</span><span class="en">Aurora Nights</span></div></div>
+    <div class="stat"><div class="num">4</div><div class="lbl"><span class="zh">国家</span><span class="en">Countries</span></div></div>
+    <div class="stat"><div class="num">€${totalBudget}</div><div class="lbl"><span class="zh">预算总额</span><span class="en">Total Budget</span></div></div>
+  `;
+}
 
-  const evHtml = day.events.map(ev => `
-    <div class="tl-line pb-6">
-      <div class="flex flex-wrap gap-2 items-center mb-2">
-        <span class="font-black text-sky-700 text-sm">${ev.t}</span>
-        <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded shadow-sm">⏱ ${ev.d}</span>
-        <span class="text-[10px] bg-sky-50 text-sky-700 px-2 py-0.5 rounded border border-sky-100">${ev.m}</span>
+function renderItinerary() {
+  const el = document.getElementById('itinerary-list');
+  el.innerHTML = itineraryData.map(d => {
+    const wpRows = d.waypoints.map(w => `
+      <tr>
+        <td class="time-col">${w.time}</td>
+        <td><span class="zh">${w.actCN}</span><span class="en">${w.actEN}</span><br><span style="font-size:.7rem;color:#9aa8cf;">📍 <span class="zh">${w.locationCN}</span><span class="en">${w.locationEN}</span></span></td>
+        <td>${w.dur}</td>
+        <td><span class="zh">${w.transCN}</span><span class="en">${w.transEN}</span></td>
+      </tr>
+    `).join('');
+    return `
+      <div class="day-card" data-day="${d.day}">
+        <div class="day-head">
+          <div class="day-badge"><span class="d">${d.day.replace('Day ','')}</span><span class="dt">${d.date}</span></div>
+          <div class="day-route">
+            <div class="city"><span class="zh">${d.cityCN}</span><span class="en">${d.cityEN}</span></div>
+            <div class="act"><span class="zh">${d.waypoints[0].actCN}</span><span class="en">${d.waypoints[0].actEN}</span></div>
+          </div>
+          <div class="day-meta">
+            ${d.aurora ? '<span class="pill aurora-pill">🌌<span class="zh">极光夜</span><span class="en">Aurora</span></span>' : ''}
+            <span class="pill"><span class="zh">${d.waypoints[0].transCN}</span><span class="en">${d.waypoints[0].transEN}</span></span>
+            <span class="pill budget">€${d.budget}</span>
+            <span class="toggle-ico">⌄</span>
+          </div>
+        </div>
+        <div class="day-body">
+          <table class="wp-table">
+            <thead><tr>
+              <th><span class="zh">时间</span><span class="en">Time</span></th>
+              <th><span class="zh">活动/地点</span><span class="en">Activity/Location</span></th>
+              <th><span class="zh">停留时间</span><span class="en">Duration</span></th>
+              <th><span class="zh">交通</span><span class="en">Transport</span></th>
+            </tr></thead>
+            <tbody>${wpRows}</tbody>
+          </table>
+          <div class="info-row">
+            <div class="info-block"><div class="k">🏨 <span class="zh">住宿</span><span class="en">Hotel</span></div><div class="v">${d.hotelCN}</div></div>
+            <div class="info-block"><div class="k">🍽️ <span class="zh">餐饮推荐</span><span class="en">Food</span></div><div class="v">${d.foodCN}</div></div>
+            <div class="info-block"><div class="k">💰 <span class="zh">预算</span><span class="en">Budget</span></div><div class="v">€${d.budget}/<span class="zh">人/天</span><span class="en">person/day</span></div></div>
+          </div>
+          <div class="day-tips">
+            <div class="k">💡 <span class="zh">当日提示</span><span class="en">Tips</span></div>
+            <ul>${d.tipsCN.map((t,i) => `<li><span class="zh">${t}</span><span class="en">${d.tipsEN[i]}</span></li>`).join('')}</ul>
+          </div>
+        </div>
       </div>
-      <p class="text-gray-800 font-medium text-sm mb-2 leading-relaxed">${ev.a}</p>
-      <a href="${ev.link}" target="_blank" class="text-xs text-blue-600 hover:text-blue-800 underline underline-offset-4 decoration-blue-300 hover:decoration-blue-600 transition-colors">🔗 Google Maps 导航</a>
+    `;
+  }).join('');
+}
+
+function renderTransport() {
+  const rows = itineraryData.map(d => {
+    const transList = [...new Set(d.waypoints.map(w => w.transCN))].join(' / ');
+    const transListEN = [...new Set(d.waypoints.map(w => w.transEN))].join(' / ');
+    return `<tr><td class="day-col">${d.day}</td><td>${d.date}</td><td><span class="zh">${d.cityCN}</span><span class="en">${d.cityEN}</span></td><td><span class="zh">${transList}</span><span class="en">${transListEN}</span></td></tr>`;
+  }).join('');
+  document.getElementById('transport-table-wrap').innerHTML = `
+    <table class="modal-table">
+      <thead><tr>
+        <th><span class="zh">天</span><span class="en">Day</span></th>
+        <th><span class="zh">日期</span><span class="en">Date</span></th>
+        <th><span class="zh">路线</span><span class="en">Route</span></th>
+        <th><span class="zh">交通方式</span><span class="en">Transport</span></th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  const hotels = [...new Map(itineraryData.map(d => [d.hotelCN, { cn:d.hotelCN, en:d.hotelEN }])).values()];
+  document.getElementById('hotel-list').innerHTML = hotels.map(h =>
+    `<div class="hotel-card"><div class="name">${h.cn}</div></div>`
+  ).join('');
+}
+
+function renderBudget() {
+  // 每日预算柱状图
+  const chartEl = document.getElementById('daily-budget-chart');
+  const maxBudget = Math.max(...budgetDetail.map(d => d.total));
+  chartEl.innerHTML = budgetDetail.map(d => {
+    const pct = (d.total / maxBudget * 100).toFixed(0);
+    return `
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:.72rem;">
+        <span style="width:30px;flex-shrink:0;color:#9aa8cf;">${d.day.replace('Day ','')}</span>
+        <div style="flex:1;height:20px;background:#1a2547;border-radius:10px;overflow:hidden;">
+          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#7b2ff7,#4cc9f0);border-radius:10px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-weight:700;font-size:.6rem;color:#fff;">€${d.total}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // 预算明细表
+  const tbody = budgetDetail.map(d => `
+    <tr>
+      <td>${d.day.replace('Day ','')}</td><td>${d.date}</td>
+      <td><span class="zh">${d.routeCN}</span><span class="en">${d.routeEN}</span></td>
+      <td>€${d.trans}</td><td>€${d.hotel}</td><td>€${d.food}</td><td>€${d.act}</td><td>€${d.other}</td>
+      <td><strong>€${d.total}</strong></td>
+    </tr>
+  `).join('');
+  const sums = budgetDetail.reduce((a,d) => { a.trans+=d.trans; a.hotel+=d.hotel; a.food+=d.food; a.act+=d.act; a.other+=d.other; a.total+=d.total; return a; }, {trans:0,hotel:0,food:0,act:0,other:0,total:0});
+  document.getElementById('budget-tbody').innerHTML = tbody + `
+    <tr class="sum-row">
+      <td colspan="3"><span class="zh">合计</span><span class="en">Total</span></td>
+      <td>€${sums.trans}</td><td>€${sums.hotel}</td><td>€${sums.food}</td><td>€${sums.act}</td><td>€${sums.other}</td>
+      <td><strong>€${sums.total}</strong></td>
+    </tr>
+  `;
+}
+
+function renderChecklist() {
+  const container = document.getElementById('checklist-container');
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('auroraChecklist')) || {}; } catch(e){}
+  container.innerHTML = checklistCategories.map(cat => `
+    <div class="cat-group">
+      <div class="cat-title"><span class="zh">${cat.nameCN}</span><span class="en">${cat.nameEN}</span></div>
+      ${cat.items.map(item => `
+        <div class="checklist-item">
+          <input type="checkbox" class="cb" data-id="${item.id}" ${saved[item.id] ? 'checked' : ''}>
+          <div class="txt"><span class="zh">${item.cn}</span><span class="en">${item.en}</span></div>
+        </div>
+      `).join('')}
     </div>
   `).join('');
-
-  let sectionClasses = 'border-gray-100 bg-white';
-  if (day.tag === 'NO-ARCTIC') sectionClasses = 'bg-gradient-to-r from-purple-50 to-white border-purple-200';
-  if (day.tag === 'NO-SENJA') sectionClasses = 'bg-gradient-to-br from-teal-50 to-emerald-50 border-teal-300 shadow-inner';
-
-  tl.insertAdjacentHTML('beforeend', `
-    <div id="${id}" class="scroll-mt-24 pt-6 border-t-2 border-gray-100 first:border-0 first:pt-0">
-      <div class="flex flex-wrap items-center gap-3 mb-4">
-        <span class="badge border ${tagStyle[day.tag]} text-xs shadow-sm">${tagLabel[day.tag]}</span>
-        <span class="text-2xl font-black text-gray-900">${day.day}</span>
-        <span class="text-gray-400 text-sm font-medium">${day.date}</span>
-      </div>
-      <h4 class="font-bold text-sky-800 text-lg mb-1">${day.loc}</h4>
-      <p class="text-sm text-gray-500 mb-6">☀️ ${day.desc}</p>
-      <div class="rounded-2xl p-5 md:p-6 border ${sectionClasses}">${evHtml}</div>
-    </div>
-  `);
-});
-
-// ---- FOOD DATA ----
-const foods = [
-  // Copenhagen
-  { name:'HØST', filter:'Copenhagen', tags:['新北欧料理', '米其林推荐', '晚餐必定'], desc:'连续荣获全球最美设计餐厅，以极合理的价格享受顶级「新北欧料理 (New Nordic)」。适合安排在 Day 16 压轴之夜。', map:'https://maps.google.com/?q=Host+Copenhagen' },
-  { name:'Torvehallerne 美食广场', filter:'Copenhagen', tags:['在地市集', '开放三明治'], desc:'哥本哈根必逛的高级市集。一定要吃 Hallernes Smørrebrød 的开放式三明治，再买杯 Coffee Collective 的咖啡。', map:'https://maps.google.com/?q=TorvehallerneKBH' },
-  { name:'Reffen', filter:'Copenhagen', tags:['海港市集', '多国街头小吃'], desc:'北欧最大的街头美食市集，位于旧造船厂区。边吃烤肉边看哥本哈根港口夕阳，气氛极度悠闲。', map:'https://maps.google.com/?q=Reffen+Copenhagen' },
-  { name:'Fiskebaren', filter:'Copenhagen', tags:['海鲜', '肉区网红店'], desc:'位于肉品包装区 (Meatpacking District) 的米其林必比登海鲜餐厅，气氛时髦，生蚝与淡菜极佳。', map:'https://maps.google.com/?q=Fiskebaren+Copenhagen' },
-
-  // Tromso & Senja
-  { name:'Fiskekompaniet', filter:'TromsoSenja', tags:['顶级海鲜', '特罗姆瑟港边'], desc:'特罗姆瑟最顶级的海鲜餐厅之一，每日依渔获决定菜单，可一边用餐一边欣赏峡湾风光。', map:'https://maps.google.com/?q=Fiskekompaniet+Tromso' },
-  { name:'Mathallen Tromsø', filter:'TromsoSenja', tags:['极地食材', '驯鹿肉'], desc:'提供正宗极地食材料理，如北极鳕鱼、驯鹿肉。楼下就是当地熟食铺。', map:'https://maps.google.com/?q=Mathallen+Tromso' },
-  { name:'Raketten Bar & Pølse', filter:'TromsoSenja', tags:['极光热狗', '路边摊'], desc:'号称世界最小的酒吧！在特罗姆瑟零下的雪地里买一份驯鹿肉热狗堡配热红酒，是不可错过的体验。', map:'https://maps.google.com/?q=Raketten+Tromso' },
-  { name:'Senja Roasters', filter:'TromsoSenja', tags:['Senja咖啡', '文青烘豆'], desc:'Senja 岛上隐藏版的极品咖啡馆。在荒野小渔村里享受高水准的手冲咖啡与现烤肉桂卷。', map:'https://maps.google.com/?q=Senja+Roasters' },
-  { name:'Senjastua', filter:'TromsoSenja', tags:['Senja传统菜', '大份量'], desc:'前往 Senja 途中的在地家庭餐厅。主打超大份量的传统挪威炖肉与海鲜汤，是极地自驾最棒的能量补给站。', map:'https://maps.google.com/?q=Senjastua' },
-
-  // Others
-  { name:'Meatballs for the People', filter:'Others', tags:['瑞典', '传统肉丸'], desc:'斯德哥尔摩公认最正宗的瑞典肉丸，除了经典猪牛肉，还可以尝试鹿肉 (Venison) 肉丸。', map:'https://maps.google.com/?q=Meatballs+for+the+People' },
-  { name:'Bryggeloftet & Stuene', filter:'Others', tags:['卑尔根', '百年海鲜'], desc:'布吕根码头百年老店。著名的浓郁卑尔根鱼汤与新鲜捕捞的峡湾海鲜拼盘。', map:'https://maps.google.com/?q=Bryggeloftet+Bergen' },
-  { name:'Aker Brygge 码头商圈', filter:'Others', tags:['奥斯陆', '海湾餐厅群'], desc:'奥斯陆的高级海滨商圈，有多家极佳的海鲜与北欧现代餐厅，吃完可直接漫步看港湾。', map:'https://maps.google.com/?q=Aker+Brygge' }
-];
-
-const grid = document.getElementById('food-grid');
-const fBtns = document.querySelectorAll('.filter-btn');
-
-function renderFood(f) {
-  grid.innerHTML = '';
-  (f === 'all' ? foods : foods.filter(x => x.filter === f)).forEach(fd => {
-    let tagsHtml = fd.tags.map(t => `<span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-1 rounded">${t}</span>`).join('');
-    grid.insertAdjacentHTML('beforeend', `
-      <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden hcard flex flex-col shadow-sm">
-        <div class="p-6 flex-grow">
-          <h3 class="font-black text-gray-800 text-xl mb-3">${fd.name}</h3>
-          <div class="flex flex-wrap gap-1 mb-4">${tagsHtml}</div>
-          <p class="text-sm text-gray-600 leading-relaxed font-medium">${fd.desc}</p>
-        </div>
-        <div class="bg-slate-50 border-t border-gray-100 p-4">
-          <a href="${fd.map}" target="_blank" class="flex justify-center items-center gap-2 text-sm text-sky-700 font-bold hover:text-sky-900 transition-colors">
-            🗺️ 打开 Google Maps
-          </a>
-        </div>
-      </div>
-    `);
-  });
 }
-renderFood('all');
-fBtns.forEach(b => b.addEventListener('click', () => {
-  fBtns.forEach(x => { 
-    x.classList.remove('bg-white','shadow-sm','text-sky-700','font-bold'); 
-    x.classList.add('text-gray-600','font-medium'); 
-  });
-  b.classList.add('bg-white','shadow-sm','text-sky-700','font-bold'); 
-  b.classList.remove('text-gray-600','font-medium');
-  renderFood(b.dataset.filter);
-}));
 
-// Initialize
-switchTab('overview');
+// ======================= 事件绑定 =======================
+document.addEventListener('DOMContentLoaded', function() {
+  renderStats();
+  renderItinerary();
+  renderTransport();
+  renderBudget();
+  renderChecklist();
+
+  // Tab 切换
+  document.querySelector('.tabs').addEventListener('click', function(e) {
+    const btn = e.target.closest('button[data-tab]');
+    if (!btn) return;
+    const tabId = btn.dataset.tab;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+  });
+
+  // 卡片展开
+  document.getElementById('itinerary-list').addEventListener('click', function(e) {
+    const card = e.target.closest('.day-card');
+    if (!card) return;
+    card.classList.toggle('open');
+  });
+
+  // 语言切换
+  document.querySelector('.lang-toggle').addEventListener('click', function(e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const lang = (btn.id === 'btn-zh') ? 'zh' : 'en';
+    document.body.classList.remove('lang-zh', 'lang-en');
+    document.body.classList.add('lang-' + lang);
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang;
+  });
+
+  // 复选框保存
+  document.getElementById('checklist-container').addEventListener('change', function(e) {
+    if (e.target.matches('.cb')) {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem('auroraChecklist')) || {}; } catch(ex) {}
+      saved[e.target.dataset.id] = e.target.checked;
+      localStorage.setItem('auroraChecklist', JSON.stringify(saved));
+    }
+  });
+
+  console.log('✅ 北欧极光 Dashboard 2026版 加载完成');
+});
 </script>
 </body>
 </html>
